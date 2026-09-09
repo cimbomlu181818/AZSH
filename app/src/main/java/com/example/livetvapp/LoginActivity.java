@@ -2,7 +2,9 @@ package com.example.livetvapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -12,76 +14,50 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etEmail, etSifre;
+    private EditText etEmail, etSifre, etDogrulamaKodu;
     private Button btnGirisYap, btnKayitOl, btnGoogle;
     private TextView tvHata, tvTrialBilgisi, tvTrialDolduBanner, tvPremiumBilgisi;
     private ProgressBar progressBar;
 
     private View layoutDogrulama;
     private TextView tvDogrulamaEmail;
+    private Button btnKoduOnayla;
     private Button btnTekrarGonder;
     private Button btnGirisEkraninaGeri;
 
-    private FirebaseHelper firebaseHelper;
-
-    private ActivityResultLauncher<Intent> googleSignInLauncher;
+    private ApiHelper apiHelper;
+    private String beklenenDogrulamaEmail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        firebaseHelper = new FirebaseHelper(this);
-
-        // Google Sign-In launcher
-        googleSignInLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                    try {
-                        GoogleSignInAccount account = task.getResult(ApiException.class);
-                        yuklemeGoster(true);
-                        firebaseHelper.googleIleGirisYap(account, new FirebaseHelper.SonucListener() {
-                            @Override
-                            public void onBasarili() {
-                                yuklemeGoster(false);
-                                erisimKontrolEt();
-                            }
-                            @Override
-                            public void onHata(String hata) {
-                                yuklemeGoster(false);
-                                hataGoster(hataMetniCevir(hata));
-                            }
-                        });
-                    } catch (ApiException e) {
-                        hataGoster("Google girişi başarısız: " + e.getMessage());
-                    }
-                });
+        apiHelper = new ApiHelper();
 
         boolean trialDoldu = getIntent().getBooleanExtra("trial_doldu", false);
         baglantilariYap();
         olaylariAyarla();
 
+        // Google ile giriş şimdilik desteklenmiyor, gizle
+        btnGoogle.setVisibility(View.GONE);
+
         if (trialDoldu) {
             tvTrialDolduBanner.setVisibility(View.VISIBLE);
         }
 
-        if (firebaseHelper.girisYapilmisMi()) {
-            erisimKontrolEt();
+        String kayitliEmail = kayitliEmailGetir();
+        if (kayitliEmail != null) {
+            erisimKontrolEt(kayitliEmail);
         }
 
-        String hataMesaji = getIntent().getStringExtra("hata_mesaji");  // ✅ if dışında
+        String hataMesaji = getIntent().getStringExtra("hata_mesaji");
         if (hataMesaji != null) {
             hataGoster(hataMesaji);
         }
@@ -90,17 +66,19 @@ public class LoginActivity extends AppCompatActivity {
     private void baglantilariYap() {
         etEmail             = findViewById(R.id.etEmail);
         etSifre             = findViewById(R.id.etSifre);
+        etDogrulamaKodu     = findViewById(R.id.etDogrulamaKodu);
         btnGirisYap         = findViewById(R.id.btnGirisYap);
         btnKayitOl          = findViewById(R.id.btnKayitOl);
         btnGoogle           = findViewById(R.id.btnGoogle);
         tvHata              = findViewById(R.id.tvHata);
         tvTrialBilgisi      = findViewById(R.id.tvTrialBilgisi);
         tvTrialDolduBanner  = findViewById(R.id.tvTrialDolduBanner);
-        tvPremiumBilgisi    = findViewById(R.id.tvPremiumBilgisi);   // ── YENİ
+        tvPremiumBilgisi    = findViewById(R.id.tvPremiumBilgisi);
         progressBar         = findViewById(R.id.progressBar);
 
         layoutDogrulama      = findViewById(R.id.layoutDogrulama);
         tvDogrulamaEmail     = findViewById(R.id.tvDogrulamaEmail);
+        btnKoduOnayla        = findViewById(R.id.btnKoduOnayla);
         btnTekrarGonder      = findViewById(R.id.btnTekrarGonder);
         btnGirisEkraninaGeri = findViewById(R.id.btnGirisEkraninaGeri);
     }
@@ -108,10 +86,6 @@ public class LoginActivity extends AppCompatActivity {
     private void olaylariAyarla() {
         btnGirisYap.setOnClickListener(v -> islemYap(false));
         btnKayitOl.setOnClickListener(v -> islemYap(true));
-        btnGoogle.setOnClickListener(v -> {
-            Intent signInIntent = firebaseHelper.getGoogleSignInClient().getSignInIntent();
-            googleSignInLauncher.launch(signInIntent);
-        });
 
         etEmail.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
@@ -128,28 +102,32 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         });
 
-        btnTekrarGonder.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String sifre = etSifre.getText().toString().trim();
-
-            if (email.isEmpty() || sifre.isEmpty()) {
-                hataGoster("Tekrar göndermek için e-posta ve şifrenizi girin.");
+        btnKoduOnayla.setOnClickListener(v -> {
+            String kod = etDogrulamaKodu.getText().toString().trim();
+            if (kod.isEmpty()) {
+                hataGoster("Lütfen doğrulama kodunu girin.");
                 return;
             }
-
+            klavyeGizle();
             yuklemeGoster(true);
-            firebaseHelper.dogrulamaMailiGonder(email, sifre, new FirebaseHelper.SonucListener() {
+            hataGizle();
+            apiHelper.dogrula(beklenenDogrulamaEmail, kod, new ApiHelper.ApiListener() {
                 @Override
-                public void onBasarili() {
+                public void onBasarili(JSONObject sonuc) {
                     yuklemeGoster(false);
-                    hataGoster("Doğrulama maili tekrar gönderildi. Lütfen gelen kutunuzu kontrol edin.");
+                    dogrulamaPaneliniGizle();
+                    hataGoster("Hesabınız doğrulandı! Şimdi giriş yapabilirsiniz.");
                 }
                 @Override
                 public void onHata(String hata) {
                     yuklemeGoster(false);
-                    hataGoster(hataMetniCevir(hata));
+                    hataGoster(hata);
                 }
             });
+        });
+
+        btnTekrarGonder.setOnClickListener(v -> {
+            hataGoster("Yeni kod almak için lütfen tekrar kayıt olun.");
         });
 
         btnGirisEkraninaGeri.setOnClickListener(v -> dogrulamaPaneliniGizle());
@@ -185,32 +163,34 @@ public class LoginActivity extends AppCompatActivity {
         hataGizle();
 
         if (kayitModu) {
-            firebaseHelper.kayitOl(email, sifre, new FirebaseHelper.SonucListener() {
+            apiHelper.kayitOl(email, sifre, new ApiHelper.ApiListener() {
                 @Override
-                public void onBasarili() {
+                public void onBasarili(JSONObject sonuc) {
                     yuklemeGoster(false);
                     dogrulamaPaneliniGoster(email);
                 }
                 @Override
                 public void onHata(String hata) {
                     yuklemeGoster(false);
-                    hataGoster(hataMetniCevir(hata));
+                    hataGoster(hata);
                 }
             });
         } else {
-            firebaseHelper.girisYap(email, sifre, new FirebaseHelper.SonucListener() {
+            String cihazId = cihazIdGetir();
+            apiHelper.girisYap(email, sifre, cihazId, new ApiHelper.ApiListener() {
                 @Override
-                public void onBasarili() {
+                public void onBasarili(JSONObject sonuc) {
                     yuklemeGoster(false);
-                    erisimKontrolEt();
+                    kayitliEmailKaydet(email);
+                    erisimKontrolEt(email);
                 }
                 @Override
                 public void onHata(String hata) {
                     yuklemeGoster(false);
-                    if ("__mail_dogrulanmamis__".equals(hata)) {
+                    if ("Hesabınız henüz doğrulanmamış.".equals(hata)) {
                         dogrulamaPaneliniGoster(email);
                     } else {
-                        hataGoster(hataMetniCevir(hata));
+                        hataGoster(hata);
                     }
                 }
             });
@@ -218,24 +198,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void dogrulamaPaneliniGoster(String email) {
+        beklenenDogrulamaEmail = email;
         runOnUiThread(() -> {
             hataGizle();
 
-            // Form elemanlarını gizle
             etEmail.setVisibility(View.GONE);
             etSifre.setVisibility(View.GONE);
             btnGirisYap.setVisibility(View.GONE);
             btnKayitOl.setVisibility(View.GONE);
             btnGoogle.setVisibility(View.GONE);
 
-            // Bilgi alanlarını gizle — bunlar panelin altında kalıp karmaşa yaratıyordu
             if (tvTrialBilgisi != null)   tvTrialBilgisi.setVisibility(View.GONE);
             if (tvPremiumBilgisi != null) tvPremiumBilgisi.setVisibility(View.GONE);
 
             tvDogrulamaEmail.setText(
-                    email + " adresine bir doğrulama maili gönderdik.\n\n" +
-                            "Lütfen gelen kutunuzu (ve spam klasörünü) kontrol edin, " +
-                            "linke tıkladıktan sonra buraya dönüp giriş yapabilirsiniz."
+                    email + " adresine bir doğrulama kodu gönderdik.\n\n" +
+                            "Kodu aşağıya girip onaylayın, ardından giriş yapabilirsiniz."
             );
             layoutDogrulama.setVisibility(View.VISIBLE);
         });
@@ -245,14 +223,11 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             layoutDogrulama.setVisibility(View.GONE);
 
-            // Form elemanlarını geri getir
             etEmail.setVisibility(View.VISIBLE);
             etSifre.setVisibility(View.VISIBLE);
             btnGirisYap.setVisibility(View.VISIBLE);
             btnKayitOl.setVisibility(View.VISIBLE);
-            btnGoogle.setVisibility(View.VISIBLE);
 
-            // Bilgi alanlarını geri getir
             if (tvTrialBilgisi != null)   tvTrialBilgisi.setVisibility(View.VISIBLE);
             if (tvPremiumBilgisi != null) tvPremiumBilgisi.setVisibility(View.VISIBLE);
 
@@ -260,29 +235,37 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void erisimKontrolEt() {
+    private void erisimKontrolEt(String email) {
         yuklemeGoster(true);
-        firebaseHelper.erisimKontrolEt(new FirebaseHelper.ErisimListener() {
+        apiHelper.erisimKontrol(email, new ApiHelper.ApiListener() {
             @Override
-            public void onErisimVar() {
+            public void onBasarili(JSONObject sonuc) {
                 yuklemeGoster(false);
-                uygulamayiAc();
-            }
-            @Override
-            public void onTrialBitti() {
-                yuklemeGoster(false);
-                firebaseHelper.cikisYap();
-                tvTrialDolduBanner.setVisibility(View.VISIBLE);
-                hataGoster("Deneme süreniz doldu. Lütfen iletişime geçin.");
-            }
-            @Override
-            public void onGirisYok() {
-                yuklemeGoster(false);
+                try {
+                    boolean bakimModu = sonuc.optBoolean("bakim_modu", false);
+                    if (bakimModu) {
+                        hataGoster(sonuc.optString("mesaj", "Uygulama bakımda."));
+                        return;
+                    }
+                    String durum = sonuc.optString("durum", "");
+                    boolean erisim = sonuc.optBoolean("erisim", false);
+
+                    if (erisim) {
+                        uygulamayiAc();
+                    } else if ("mail_dogrulanmadi".equals(durum)) {
+                        dogrulamaPaneliniGoster(email);
+                    } else {
+                        tvTrialDolduBanner.setVisibility(View.VISIBLE);
+                        hataGoster("Deneme süreniz doldu. Lütfen iletişime geçin.");
+                    }
+                } catch (Exception e) {
+                    hataGoster("Beklenmeyen bir hata oluştu.");
+                }
             }
             @Override
             public void onHata(String hata) {
                 yuklemeGoster(false);
-                hataGoster("Bağlantı hatası: " + hata);
+                hataGoster(hata);
             }
         });
     }
@@ -299,12 +282,27 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    private String cihazIdGetir() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    private SharedPreferences tercihler() {
+        return getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
+    }
+
+    private void kayitliEmailKaydet(String email) {
+        tercihler().edit().putString("email", email).apply();
+    }
+
+    private String kayitliEmailGetir() {
+        return tercihler().getString("email", null);
+    }
+
     private void yuklemeGoster(boolean goster) {
         runOnUiThread(() -> {
             progressBar.setVisibility(goster ? View.VISIBLE : View.GONE);
             btnGirisYap.setEnabled(!goster);
             btnKayitOl.setEnabled(!goster);
-            btnGoogle.setEnabled(!goster);
         });
     }
 
@@ -325,29 +323,6 @@ public class LoginActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-    }
-
-    private String hataMetniCevir(String hata) {
-        if (hata == null) return "Bilinmeyen hata.";
-        if (hata.contains("email address is already in use"))
-            return "Bu e-posta adresi zaten kayıtlı.";
-        if (hata.contains("no user record") || hata.contains("user-not-found"))
-            return "Bu e-posta adresiyle kayıtlı hesap bulunamadı.";
-        if (hata.contains("password is invalid") || hata.contains("wrong-password"))
-            return "Şifre hatalı.";
-        if (hata.contains("network"))
-            return "İnternet bağlantısı hatası.";
-        if (hata.contains("credential is incorrect") || hata.contains("malformed or has expired"))
-            return "Lütfen önce kayıt olun veya bilgilerinizi kontrol edin.";
-        if (hata.contains("CONFIGURATION_NOT_FOUND") || hata.contains("configuration"))
-            return "Bağlantı hatası. Lütfen internete bağlanın.";
-        if (hata.contains("NETWORK_ERROR") || hata.contains("Unable to resolve host"))
-            return "İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edin.";
-        if (hata.contains("2 cihazda aktif"))
-            return hata;
-        if (hata.contains("zaten doğrulanmış"))
-            return hata;
-        return "Hata: " + hata;
     }
 
     @Override

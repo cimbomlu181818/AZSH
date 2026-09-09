@@ -2,7 +2,9 @@ package com.example.livetvapp;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+
+import org.json.JSONObject;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -118,25 +122,36 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
         progressAnim.start();
+        // ── API kontrol
+        SharedPreferences tercihler = getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
+        String kayitliEmail = tercihler.getString("email", null);
 
-        // ── Firebase kontrol
-        FirebaseHelper firebaseHelper = new FirebaseHelper(this);
-
-        if (!firebaseHelper.girisYapilmisMi()) {
-            // Kullanıcı giriş yapmamış → login'e git
+        if (kayitliEmail == null) {
+            // Kullanıcı hiç giriş yapmamış → login'e git
             handler.postDelayed(() -> gitLogin(null), 1500);
             return;
         }
 
-        firebaseHelper.erisimKontrolEt(new FirebaseHelper.ErisimListener() {
+        ApiHelper apiHelper = new ApiHelper();
+        apiHelper.erisimKontrol(kayitliEmail, new ApiHelper.ApiListener() {
             @Override
-            public void onErisimVar() { gitMain(); }
+            public void onBasarili(JSONObject sonuc) {
+                boolean bakimModu = sonuc.optBoolean("bakim_modu", false);
+                if (bakimModu) {
+                    gitLoginHata(sonuc.optString("mesaj", "Uygulama bakımda."));
+                    return;
+                }
+                String durum = sonuc.optString("durum", "");
+                boolean erisim = sonuc.optBoolean("erisim", false);
 
-            @Override
-            public void onTrialBitti() { gitLogin("trial_doldu"); }
-
-            @Override
-            public void onGirisYok() { gitLogin(null); }
+                if (erisim) {
+                    gitMain();
+                } else if ("mail_dogrulanmadi".equals(durum)) {
+                    gitLogin(null);
+                } else {
+                    gitLogin("trial_doldu");
+                }
+            }
 
             @Override
             public void onHata(String hata) {

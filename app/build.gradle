@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.gms.google-services'
 }
 
 android {
@@ -68,14 +67,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-installations:17.2.0'
-    // 🔥 FIREBASE
-    implementation platform('com.google.firebase:firebase-bom:33.1.2')
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-config'
-    implementation 'com.google.android.gms:play-services-auth:21.2.0'
-
     // CORE ANDROID LIBRARIES
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'

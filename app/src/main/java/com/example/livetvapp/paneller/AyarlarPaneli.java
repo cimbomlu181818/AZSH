@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.Gravity;
 
-import com.example.livetvapp.FirebaseHelper;
 import com.google.firebase.auth.FirebaseUser;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;

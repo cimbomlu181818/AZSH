@@ -239,6 +239,32 @@
                 android:textColor="#FFFFFF"
                 android:textSize="13sp"
                 android:layout_marginBottom="16dp" />
+            <EditText
+                android:id="@+id/etDogrulamaKodu"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/input_background_turuncu_focus"
+                android:hint="6 haneli kod"
+                android:inputType="number"
+                android:maxLength="6"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#8F9BB3"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnKoduOnayla"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/button_panel_rengi"
+                android:stateListAnimator="@null"
+                android:text="✔  KODU ONAYLA"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnTekrarGonder"

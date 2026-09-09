@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.Gravity;
 
-import com.google.firebase.auth.FirebaseUser;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -302,11 +301,9 @@ public class AyarlarPaneli {
             ayarlarContainer.addView(btnRemote);
         }
 
-        FirebaseHelper firebaseHelper = new FirebaseHelper(activity);
-        FirebaseUser mevcutKullanici = firebaseHelper.mevcutKullanici();
-        String emailBilgisi = (mevcutKullanici != null && mevcutKullanici.getEmail() != null)
-                ? mevcutKullanici.getEmail()
-                : "";
+        SharedPreferences girisTercihleriAyarlar = activity.getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
+        String emailBilgisi = girisTercihleriAyarlar.getString("email", "");
+        if (emailBilgisi == null) emailBilgisi = "";
         String cikisButonMetni = emailBilgisi.isEmpty()
                 ? "6 - Çıkış Yap"
                 : "6 - Çıkış Yap\n" + emailBilgisi.toLowerCase();
@@ -1497,16 +1494,14 @@ public class AyarlarPaneli {
     }
 
     private void cikisYapButonuTiklandi() {
-        FirebaseHelper firebaseHelper = new FirebaseHelper(activity);
-        FirebaseUser mevcutKullanici = firebaseHelper.mevcutKullanici();
-        String emailBilgisi = (mevcutKullanici != null && mevcutKullanici.getEmail() != null)
-                ? mevcutKullanici.getEmail()
-                : "Oturum açık";
+        SharedPreferences girisTercihleri = activity.getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
+        String emailBilgisi = girisTercihleri.getString("email", "Oturum açık");
+        if (emailBilgisi == null || emailBilgisi.isEmpty()) emailBilgisi = "Oturum açık";
         new AlertDialog.Builder(activity)
                 .setTitle("Çıkış Yap")
                 .setMessage("Oturumu kapatmak istediğinize emin misiniz?\n(" + emailBilgisi + ")")
                 .setPositiveButton("Evet", (dialog, which) -> {
-                    firebaseHelper.cikisYap();
+                    girisTercihleri.edit().clear().apply();
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         Intent intent = new Intent(activity, com.example.livetvapp.LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

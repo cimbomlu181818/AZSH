@@ -13,6 +13,7 @@ import android.view.ViewParent;
 import android.view.WindowManager;
 import android.media.AudioManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -24,11 +25,12 @@ import com.example.livetvapp.remotecontrol.RemoteCommandServer;
 import com.example.livetvapp.tvbox.Anakontrol;
 import com.example.livetvapp.remotecontrol.DeviceDetector;
 import android.app.Dialog;
+import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     private Anakontrol      anakontrol;
     private AppDatabase     database;
-    private FirebaseHelper  firebaseHelper;
+    private ApiHelper       apiHelper;
 
     // ─── Server değişkenleri ──────────────────────────────────────────────
     private com.example.livetvapp.dosyatransferi.RemoteControlServer remoteServer;
@@ -70,41 +72,43 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 🔐 Giriş ve erişim kontrolü
-        firebaseHelper = new FirebaseHelper(this);
-        firebaseHelper.bakimModuKontrolEt(new FirebaseHelper.BakimModuListener() {
-            @Override
-            public void onAktif(String mesaj, String url) {
-                bakimEkraniniGoster(mesaj, url);
-            }
-            @Override
-            public void onPasif() {
-                // Normal akış — bir şey yapma, onCreate devam eder
-            }
-            @Override
-            public void onHata(String hata) {
-                // Internet yoksa veya fetch başarısızsa uygulamayı engelleme
-                // Sessizce devam et
-            }
-        });
-        if (!firebaseHelper.girisYapilmisMi()) {
+        apiHelper = new ApiHelper();
+
+        SharedPreferences girisTercihleri = getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
+        String kayitliEmail = girisTercihleri.getString("email", null);
+
+        if (kayitliEmail == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
 
-        firebaseHelper.erisimKontrolEt(new FirebaseHelper.ErisimListener() {
-            @Override public void onErisimVar() { /* devam et */ }
-            @Override public void onTrialBitti() {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                intent.putExtra("trial_doldu", true);
-                startActivity(intent);
-                finish();
+        apiHelper.erisimKontrol(kayitliEmail, new ApiHelper.ApiListener() {
+            @Override
+            public void onBasarili(JSONObject sonuc) {
+                boolean bakimModu = sonuc.optBoolean("bakim_modu", false);
+                if (bakimModu) {
+                    bakimEkraniniGoster(sonuc.optString("mesaj", "Uygulama bakımda."), null);
+                    return;
+                }
+                String durum = sonuc.optString("durum", "");
+                boolean erisim = sonuc.optBoolean("erisim", false);
+
+                if (erisim) {
+                    // devam et
+                } else if ("mail_dogrulanmadi".equals(durum)) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.putExtra("trial_doldu", true);
+                    startActivity(intent);
+                    finish();
+                }
             }
-            @Override public void onGirisYok() {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
-            }
-            @Override public void onHata(String hata) {
+
+            @Override
+            public void onHata(String hata) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 intent.putExtra("hata_mesaji", "İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edin.");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -409,24 +413,41 @@ public class MainActivity extends AppCompatActivity {
 
     // ─── Erişim kontrol metodu ───────────────────────────────────────────────
     private void erisimKontrolYap() {
-        if (firebaseHelper == null) return;
+        if (apiHelper == null) return;
 
-        firebaseHelper.erisimKontrolEt(new FirebaseHelper.ErisimListener() {
-            @Override public void onErisimVar() { /* her şey yolunda */ }
-            @Override public void onTrialBitti() {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                intent.putExtra("trial_doldu", true);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+        SharedPreferences girisTercihleri = getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
+        String kayitliEmail = girisTercihleri.getString("email", null);
+        if (kayitliEmail == null) return;
+
+        apiHelper.erisimKontrol(kayitliEmail, new ApiHelper.ApiListener() {
+            @Override
+            public void onBasarili(JSONObject sonuc) {
+                boolean bakimModu = sonuc.optBoolean("bakim_modu", false);
+                if (bakimModu) {
+                    bakimEkraniniGoster(sonuc.optString("mesaj", "Uygulama bakımda."), null);
+                    return;
+                }
+                String durum = sonuc.optString("durum", "");
+                boolean erisim = sonuc.optBoolean("erisim", false);
+
+                if (erisim) {
+                    /* her şey yolunda */
+                } else if ("mail_dogrulanmadi".equals(durum)) {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.putExtra("trial_doldu", true);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
             }
-            @Override public void onGirisYok() {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            }
-            @Override public void onHata(String hata) {
+
+            @Override
+            public void onHata(String hata) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 intent.putExtra("hata_mesaji", "İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edin.");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -309,7 +309,6 @@ public class TmdbService {
             conn.setReadTimeout(8000);
             conn.setRequestProperty("Accept", "application/json");
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                System.out.println("⚠️ [TMDB] HTTP " + conn.getResponseCode() + " → " + urlStr);
                 return null;
             }
             BufferedReader reader = new BufferedReader(

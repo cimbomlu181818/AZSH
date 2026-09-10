@@ -10,8 +10,8 @@ import java.io.InputStreamReader;
 
 public class ApiHelper {
 
-    // Emülatörde çalışırken bilgisayarına bu adresle ulaşılır.
-    // Gerçek cihazda test edersen, bunu bilgisayarının yerel ağ IP'siyle değiştireceğiz.
+
+
     private static final String BASE_URL = "http://10.0.2.2:8000/api/";
 
     public interface ApiListener {

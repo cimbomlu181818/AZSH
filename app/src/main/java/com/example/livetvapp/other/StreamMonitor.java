@@ -10,7 +10,7 @@ public class StreamMonitor {
 
     public enum Mode { IDLE, PRE_RETRY, MONITORING }
 
-    private static final int PRE_RETRY_INTERVAL_MS = 5000;   // 5 saniye
+    private static final int PRE_RETRY_INTERVAL_MS = 5000;   
     private static final int MAX_PRE_RETRY_COUNT = 20;
     private static final int MONITORING_INTERVAL_MS = 5000;
 
@@ -93,10 +93,10 @@ public class StreamMonitor {
     public void onStreamError() {
         if (currentMode == Mode.MONITORING || currentMode == Mode.IDLE) {
             Log.w(TAG, "Yayın hatası, PRE_RETRY moduna geçiliyor");
-            // 🔧 FIX: Hata durumunda UI'ı sıfırla
+            
             mainHandler.post(() -> {
                 if (listener instanceof com.example.livetvapp.tvbox.Anakontrol) {
-                    // UI yenileme tetikleyicisi
+                    
                 }
             });
             startPreRetry(currentStreamUrl);
@@ -165,7 +165,7 @@ public class StreamMonitor {
 
             if (!playing) {
                 if (userPaused) {
-                    // Kullanıcı duraklattı, donma olarak algılama
+                    
                     lastMediaTime = -1;
                     scheduleMonitoringLater();
                     return;

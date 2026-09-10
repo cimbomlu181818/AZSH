@@ -44,7 +44,7 @@ public class AyarlarPaneli {
     private DpadModuSaglayici dpadModuSupplier;
     public void setDpadModuSupplier(DpadModuSaglayici s) { this.dpadModuSupplier = s; }
 
-    // ── YENİ: Kısayol kutusu görünürlük değişim callback'i ──────────────────
+
     public interface OnShortcutBoxVisibilityChangedListener {
         void onVisibilityChanged(boolean visible);
     }
@@ -52,9 +52,9 @@ public class AyarlarPaneli {
     public void setOnShortcutBoxVisibilityChangedListener(OnShortcutBoxVisibilityChangedListener l) {
         this.shortcutBoxListener = l;
     }
-    // ─────────────────────────────────────────────────────────────────────────
 
-    // ── YENİ: Menü değişim callback'i ──────────────────────────────────────
+
+
     public interface OnMenuChangedListener {
         void onMenuChanged(MenuSeviyesi yeniMenu);
     }
@@ -66,7 +66,7 @@ public class AyarlarPaneli {
         mevcutMenu = yeniMenu;
         if (menuChangedListener != null) menuChangedListener.onMenuChanged(yeniMenu);
     }
-    // ───────────────────────────────────────────────────────────────────────
+
 
     private static final int DOSYA_SECICI_REQUEST = 200;
     private static final int YEDEK_SECICI_REQUEST = 201;
@@ -75,7 +75,7 @@ public class AyarlarPaneli {
     private static final int RENK_ALT_OGE  = 0xFF1A3A5A;
     private static final int RENK_GERI     = 0xFF1A3A5A;
 
-    // Son kayıtlar için SharedPreferences anahtarları
+
     private static final String PREFS_NAME = "AyarlarPaneliPrefs";
     private static final String KEY_LAST_M3U_URL = "last_m3u_url";
     private static final String KEY_LAST_XTREAM_SERVER = "last_xtream_server";
@@ -291,7 +291,7 @@ public class AyarlarPaneli {
         btn3.setOnClickListener(v -> uygulamayiKapat());
         ayarlarContainer.addView(btn3);
 
-        // --- YENİ: Sadece telefon için Kumanda butonu ---
+
         if (DeviceDetector.isPhone(activity)) {
             Button btnRemote = anaKategoriButonOlustur("5 - Kumanda");
             btnRemote.setOnClickListener(v -> {
@@ -409,7 +409,7 @@ public class AyarlarPaneli {
         btnStalker.setOnClickListener(v -> stalkerHesapDiyaloguGoster());
         ayarlarContainer.addView(btnStalker);
         btnGeri.postDelayed(() -> btnGeri.requestFocus(), 100);
-        // Footer
+
         TextView footer = new TextView(activity);
         footer.setText("AZSH YAZILIM\nMade in Turkey");
         footer.setTextColor(0xAAFFFFFF);
@@ -437,7 +437,7 @@ public class AyarlarPaneli {
         if (sanalDpadCallback != null) sanalDpadCallback.run();
     }
 
-    // Yeni: M3U URL için seçim diyaloğu
+
     private void m3uUrlDiyaloguGoster() {
         new AlertDialog.Builder(activity)
                 .setTitle("M3U URL Yükle")
@@ -458,7 +458,7 @@ public class AyarlarPaneli {
                 .show();
     }
 
-    // M3U URL formunu gösterir (isteğe bağlı ön doldurma)
+
     private void m3uUrlFormunuGoster(String prefillUrl) {
         ayarlarContainer.removeAllViews();
         normalModuGoster();
@@ -493,7 +493,7 @@ public class AyarlarPaneli {
                 etUrl.requestFocus();
                 return;
             }
-            // YENİ: Girilen URL'yi hemen kaydet
+
             saveLastM3UUrl(url);
             ozelKlavye.gizle();
             panelGenislikAyarla(false);
@@ -530,7 +530,7 @@ public class AyarlarPaneli {
         etUrl.postDelayed(() -> etUrl.requestFocus(), 150);
     }
 
-    // Yeni: Xtream için seçim diyaloğu
+
     private void xtreamHesapDiyaloguGoster() {
         new AlertDialog.Builder(activity)
                 .setTitle("Xtream Codes Ekle")
@@ -569,7 +569,7 @@ public class AyarlarPaneli {
         ayarlarContainer.addView(btnGeri);
         ayarlarContainer.addView(ayiriciOlustur());
 
-        // FORM ALANLARI
+
         EditText etServer = formAlanOlustur("http://sunucu.com:8080");
         EditText etUser   = formAlanOlustur("Kullanıcı Adı");
         EditText etPass   = formAlanOlustur("Şifre");
@@ -611,10 +611,10 @@ public class AyarlarPaneli {
                 return;
             }
 
-            // YENİ: Girilen Xtream bilgilerini hemen kaydet
+
             saveLastXtream(server, user, pass);
 
-            // Hesap adı oluştur
+
             String accName;
             try {
                 java.net.URL parsedUrl = new java.net.URL(server);
@@ -630,7 +630,7 @@ public class AyarlarPaneli {
         });
         ayarlarContainer.addView(btnYukle);
 
-        // FOCUS VE KLAVYE AYARLARI
+
         etServer.setOnFocusChangeListener((v, f) -> { renkveklavye((EditText)v, f, etServer); });
         etUser.setOnFocusChangeListener((v, f) -> { renkveklavye((EditText)v, f, etUser); });
         etPass.setOnFocusChangeListener((v, f) -> { renkveklavye((EditText)v, f, etPass); });
@@ -661,7 +661,7 @@ public class AyarlarPaneli {
     }
     private void stalkerFormunuGoster(String prefillUrl, String prefillMac) {
         ayarlarContainer.removeAllViews();
-        menuDegisti(MenuSeviyesi.XTREAM_MENU); // Mevcut enum yeterli
+        menuDegisti(MenuSeviyesi.XTREAM_MENU);
         normalModuGoster();
         panelGenislikAyarla(true);
 
@@ -711,7 +711,7 @@ public class AyarlarPaneli {
                 return;
             }
 
-            // Portal adını URL'den türet
+
             String portalAdi;
             try {
                 java.net.URL parsed = new java.net.URL(portalUrl);
@@ -1110,14 +1110,14 @@ public class AyarlarPaneli {
     private void silinenlereAitPrefsTemizle(List<String> silinenM3UAdlari) {
         if (silinenM3UAdlari == null || silinenM3UAdlari.isEmpty()) return;
 
-        // ── 1. gizli_kanallar: anahtar = kanal URL'si
-        // Silinen M3U'lara ait tüm kanal URL'lerini DB'den çekip sil
+
+
         new Thread(() -> {
             try {
                 com.example.livetvapp.database.AppDatabase db =
                         com.example.livetvapp.database.AppDatabase.getInstance(activity);
 
-                // Silinen M3U'lara ait tüm URL'leri topla
+
                 java.util.Set<String> silinecekUrller = new java.util.HashSet<>();
                 java.util.Set<String> silinecekKategoriler = new java.util.HashSet<>();
                 for (String m3uAdi : silinenM3UAdlari) {
@@ -1127,7 +1127,7 @@ public class AyarlarPaneli {
                     if (kats != null) silinecekKategoriler.addAll(kats);
                 }
 
-                // gizli_kanallar: URL bazlı temizle
+
                 android.content.SharedPreferences spKanallar =
                         activity.getSharedPreferences("gizli_kanallar", android.content.Context.MODE_PRIVATE);
                 android.content.SharedPreferences.Editor edKanallar = spKanallar.edit();
@@ -1136,8 +1136,8 @@ public class AyarlarPaneli {
                 }
                 edKanallar.apply();
 
-                // gizli_kategoriler: kategori adı bazlı temizle
-                // NOT: Aynı kategori adı başka M3U'da da varsa silme
+
+
                 java.util.Set<String> korunacakKategoriler = new java.util.HashSet<>();
                 List<com.example.livetvapp.database.M3UItem> kalanM3Ular = m3uManager.getAllM3UItems();
                 for (com.example.livetvapp.database.M3UItem m3u : kalanM3Ular) {
@@ -1154,7 +1154,7 @@ public class AyarlarPaneli {
                 }
                 edKategoriler.apply();
 
-                // gizli_m3ular: M3U adı bazlı temizle
+
                 android.content.SharedPreferences spM3ular =
                         activity.getSharedPreferences("gizli_m3ular", android.content.Context.MODE_PRIVATE);
                 android.content.SharedPreferences.Editor edM3ular = spM3ular.edit();
@@ -1163,9 +1163,9 @@ public class AyarlarPaneli {
                 }
                 edM3ular.apply();
 
-                // kategori_siralama: LIVE_sirasi, MOVIE_sirasi, SERIES_sirasi
-                // Format: "m3uAdi###kategoriAdi###m3uAdi###kategoriAdi..."
-                // Silinen M3U'ya ait girişleri çıkar
+
+
+
                 android.content.SharedPreferences spSiralama =
                         activity.getSharedPreferences("kategori_siralama", android.content.Context.MODE_PRIVATE);
                 android.content.SharedPreferences.Editor edSiralama = spSiralama.edit();
@@ -1174,8 +1174,8 @@ public class AyarlarPaneli {
                     String kayit = spSiralama.getString(tur + "_sirasi", null);
                     if (kayit == null || kayit.isEmpty()) continue;
                     String[] parcalar = kayit.split("###");
-                    // Format: m3uAdi###katAdi###m3uAdi###katAdi...
-                    // Silinen M3U'ya ait çiftleri çıkar
+
+
                     StringBuilder yeniKayit = new StringBuilder();
                     for (int i = 0; i + 1 < parcalar.length; i += 2) {
                         String m3uAdi = parcalar[i].trim();
@@ -1200,10 +1200,10 @@ public class AyarlarPaneli {
 
     private void m3uUrldenYukle(String url) {
 
-        // Önce URL'nin doğrudan Xtream API formatında olup olmadığını kontrol et
+
         String[] xtreamAuth = xtreamKimliginiCikar(url);
         if (xtreamAuth != null) {
-            // Doğrudan Xtream API ile yükleme yap
+
             String server = xtreamAuth[0];
             String username = xtreamAuth[1];
             String password = xtreamAuth[2];
@@ -1278,12 +1278,12 @@ public class AyarlarPaneli {
                     }
                     for (Channel ch : kanallar) ch.setSourceName(finalM3uAdi);
 
-                    // ── KALİTE KONTROLÜ ──────────────────────────────────────────
+
                     boolean xtreamDenenmeli = xtreamDenemesiGerekiyor(kanallar, url);
                     System.out.println("🔍 [M3U-URL] Xtream denemesi gerekiyor mu: " + xtreamDenenmeli);
 
                     if (xtreamDenenmeli) {
-                        // URL'den server, username, password çıkar
+
                         String[] kimlik = xtreamKimliginiCikar(url);
                         if (kimlik != null) {
                             String server   = kimlik[0];
@@ -1291,7 +1291,7 @@ public class AyarlarPaneli {
                             String password = kimlik[2];
                             System.out.println("🔍 [M3U-URL] Xtream bilgileri bulundu → sessizce deneniyor");
 
-                            // Xtream'i sessizce dene, sonuç gelirse onu kullan
+
                             XtreamCodesManager.loadChannels(activity, server, username, password,
                                     finalM3uAdi,
                                     new XtreamCodesManager.OnXtreamLoadListener() {
@@ -1308,7 +1308,7 @@ public class AyarlarPaneli {
                                             mainHandler.post(() -> {
                                                 System.out.println("✅ [M3U-URL] Xtream başarılı → "
                                                         + xtreamKanallar.size() + " kanal");
-                                                // Normal parse sonucunu at, Xtream sonucunu kaydet
+
                                                 kaydetVeBitir(xtreamKanallar, finalM3uAdi, url,
                                                         server, username, password,
                                                         channelRepository, mainHandler, true);
@@ -1320,19 +1320,19 @@ public class AyarlarPaneli {
                                             mainHandler.post(() -> {
                                                 System.out.println("⚠️ [M3U-URL] Xtream başarısız → "
                                                         + "normal parse kullanılıyor. Hata: " + error);
-                                                // Xtream çalışmadı, normal parse sonucunu kullan
+
                                                 kaydetVeBitir(kanallar, finalM3uAdi, url,
                                                         null, null, null,
                                                         channelRepository, mainHandler, false);
                                             });
                                         }
                                     });
-                            return; // Xtream deneniyor, burada dur
+                            return;
                         }
                     }
 
-                    // Xtream denemesi gerekmiyorsa veya kimlik çıkarılamadıysa
-                    // normal parse sonucunu direkt kaydet
+
+
                     kaydetVeBitir(kanallar, finalM3uAdi, url,
                             null, null, null,
                             channelRepository, mainHandler, false);
@@ -1348,11 +1348,11 @@ public class AyarlarPaneli {
         }).start();
     }
 
-    // ── Yardımcı: Xtream denemesi gerekip gerekmediğini kontrol eder ──────────
+
     private boolean xtreamDenemesiGerekiyor(List<Channel> kanallar, String url) {
         if (kanallar == null || kanallar.isEmpty()) return false;
 
-        // URL'de Xtream kimliği yoksa zaten gerek yok
+
         if (xtreamKimliginiCikar(url) == null) return false;
 
         int toplamKanal = kanallar.size();
@@ -1368,7 +1368,7 @@ public class AyarlarPaneli {
 
         double liveOrani = (double) liveSayisi / toplamKanal;
 
-        // Tüm kanallar LIVE tipinde ise VEYA kategori çeşitliliği zayıfsa dene
+
         boolean tumKanallarlive = liveOrani >= 0.95;
         boolean kategoriZayif   = kategoriler.size() <= 3;
 
@@ -1382,7 +1382,7 @@ public class AyarlarPaneli {
         return tumKanallarlive || kategoriZayif;
     }
 
-    // ── Yardımcı: URL'den Xtream server/username/password çıkarır ────────────
+
     private String[] xtreamKimliginiCikar(String urlStr) {
         try {
             java.net.URL parsedUrl = new java.net.URL(urlStr);
@@ -1391,7 +1391,7 @@ public class AyarlarPaneli {
             String username = null;
             String password = null;
 
-            // Önce query parametrelerinde ara (username=... & password=...)
+
             String query = parsedUrl.getQuery();
             if (query != null) {
                 for (String param : query.split("&")) {
@@ -1402,11 +1402,11 @@ public class AyarlarPaneli {
                 }
             }
 
-            // Query'de yoksa path'te ara (/username/password/streamId)
+
             if (username == null || password == null) {
                 String path = parsedUrl.getPath();
                 String[] parcalar = path.split("/");
-                // /get.php veya /username/password/... formatı
+
                 if (parcalar.length >= 3) {
                     String p1 = parcalar[1];
                     String p2 = parcalar[2];
@@ -1437,7 +1437,7 @@ public class AyarlarPaneli {
         return null;
     }
 
-    // ── Yardımcı: Kanalları DB'ye kaydeder ve UI'ı bitirir ───────────────────
+
     private void kaydetVeBitir(List<Channel> kanallar,
                                String m3uAdi,
                                String url,
@@ -1456,7 +1456,7 @@ public class AyarlarPaneli {
 
         if (siralamaPaneli != null) siralamaPaneli.veriGecersizKil();
 
-        // Xtream başarılıysa hesabı kaydet
+
         if (xtreamBasarili && xtreamServer != null) {
             XtreamCodesManager.saveAccount(activity, m3uAdi, xtreamServer, xtreamUser, xtreamPass);
             System.out.println("✅ [M3U-URL] Xtream hesabı kaydedildi: " + m3uAdi);
@@ -1678,9 +1678,9 @@ public class AyarlarPaneli {
         });
     }
 
-    // -------------------------------------------------------------------------
-    // Son kayıtları yönetmek için yardımcı metodlar
-    // -------------------------------------------------------------------------
+
+
+
     private void saveLastM3UUrl(String url) {
         activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit().putString(KEY_LAST_M3U_URL, url).apply();
@@ -1708,7 +1708,7 @@ public class AyarlarPaneli {
         if (server == null || user == null || pass == null) return null;
         return new String[]{server, user, pass};
     }
-    // -------------------------------------------------------------------------
+
     private void stalkerHesapDiyaloguGoster() {
         new AlertDialog.Builder(activity)
                 .setTitle("Stalker Portal Ekle")
@@ -1800,7 +1800,7 @@ public class AyarlarPaneli {
     public void anaMenuyeDon() { anaMenuyuOlustur(); }
 
     public void goster() {
-        // Çıkış butonu göster
+
         Button btnCikis = panelView.findViewById(R.id.btnCikisYap);
         if (btnCikis != null) {
             btnCikis.setVisibility(View.GONE);

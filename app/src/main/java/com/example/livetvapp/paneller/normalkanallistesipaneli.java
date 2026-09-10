@@ -104,11 +104,11 @@ public class normalkanallistesipaneli {
                 int gorunan    = lm.getChildCount();
                 int toplam     = lm.getItemCount();
                 int ilkGorunen = lm.findFirstVisibleItemPosition();
-                // Aşağı scroll
+                
                 if (dy > 0 && !isLoadingMore && (gorunan + ilkGorunen) >= toplam - LOAD_AHEAD) {
                     daha_fazla_yukle();
                 }
-                // Yukarı scroll
+                
                 if (dy < 0 && !ustYukleniyor && !tumUstKanallarYuklendi && ilkGorunen <= 5) {
                     yukari_yukle();
                 }
@@ -190,7 +190,7 @@ public class normalkanallistesipaneli {
             });
             return;
         }
-        // DB callback yoksa bellek listesinden al
+        
         if (ustOffset <= 0) {
             tumUstKanallarYuklendi = true;
             return;

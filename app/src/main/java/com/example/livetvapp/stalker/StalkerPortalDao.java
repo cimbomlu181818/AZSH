@@ -24,7 +24,7 @@ public interface StalkerPortalDao {
     @Query("DELETE FROM stalker_portals WHERE id = :id")
     void deleteById(long id);
 
-    // YENİ: Tüm portalları sil (içe aktarma öncesi temizlik için)
+    
     @Query("DELETE FROM stalker_portals")
     void deleteAll();
 }

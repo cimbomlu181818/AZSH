@@ -682,7 +682,7 @@ public class SiralamaPaneli {
             if (kayit == null || kayit.isEmpty()) return null;
             String[] parcalar = kayit.split(KAYIT_AYRAC);
             List<String> liste = new ArrayList<>();
-            // parcalar dizisi: [m3u1, kat1, m3u1, kat2, m3u2, kat3, ...]
+
             for (int i = 0; i + 1 < parcalar.length; i += 2) {
                 String cift = parcalar[i] + KAYIT_AYRAC + parcalar[i+1];
                 liste.add(cift);

@@ -14,7 +14,7 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TV/Tablet ise direkt M3U Player'a git
+
         if (!DeviceDetector.isPhone(this)) {
             startActivity(new Intent(this, MainActivity.class));
             finish();

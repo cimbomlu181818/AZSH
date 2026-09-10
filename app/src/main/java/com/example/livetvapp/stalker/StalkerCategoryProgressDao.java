@@ -24,11 +24,11 @@ public interface StalkerCategoryProgressDao {
     @Query("DELETE FROM stalker_category_progress WHERE m3uName = :m3uName")
     void deleteByM3uName(String m3uName);
 
-    // YENİ: Tüm kayıtları getir (yedekleme için)
+    
     @Query("SELECT * FROM stalker_category_progress")
     List<StalkerCategoryProgress> getAll();
 
-    // YENİ: Tüm kayıtları sil (içe aktarma öncesi temizlik için)
+    
     @Query("DELETE FROM stalker_category_progress")
     void deleteAll();
 }

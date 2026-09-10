@@ -17,7 +17,7 @@ public class StalkerApiClient {
             "Mozilla/5.0 (QtEmbedded; U; Linux; C) AppleWebKit/533.3 " +
                     "(KHTML, like Gecko) MAG200 stbapp ver: 2 rev: 250 Safari/533.3";
 
-    // ------------- LIVE -------------
+
     public static JSONObject handshakeSync(String baseUrl, String mac) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
                 + "?action=handshake&type=stb&token=&JsHttpRequest=1-xml";
@@ -74,11 +74,9 @@ public class StalkerApiClient {
         return extractUrl(cmd);
     }
 
-    // ------------- VOD (Film) -------------
 
-    /**
-     * VOD kategorilerini getirir
-     */
+
+
     public static JSONObject getVodCategoriesSync(String baseUrl, String token, String mac) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
                 + "?action=get_categories"
@@ -88,11 +86,7 @@ public class StalkerApiClient {
         return doGet(urlStr, mac, token);
     }
 
-    /**
-     * Belirli bir VOD kategorisindeki filmleri sayfalı olarak getirir
-     * @param categoryId kategori id'si ("*" = tümü)
-     * @param page sayfa numarası (0'dan başlar)
-     */
+
     public static JSONObject getVodListSync(String baseUrl, String token, String mac,
                                             String categoryId, int page) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
@@ -105,9 +99,7 @@ public class StalkerApiClient {
         return doGet(urlStr, mac, token);
     }
 
-    /**
-     * VOD için stream linki oluşturur
-     */
+
     public static String createVodLinkSync(String baseUrl, String token, String mac, String cmd) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
                 + "?action=create_link"
@@ -124,11 +116,9 @@ public class StalkerApiClient {
         return extractUrl(cmd);
     }
 
-    // ------------- SERIES (Dizi) -------------
 
-    /**
-     * Dizi kategorilerini getirir
-     */
+
+
     public static JSONObject getSeriesCategoriesSync(String baseUrl, String token, String mac) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
                 + "?action=get_categories"
@@ -138,9 +128,7 @@ public class StalkerApiClient {
         return doGet(urlStr, mac, token);
     }
 
-    /**
-     * Belirli bir kategorideki dizileri sayfalı olarak getirir
-     */
+
     public static JSONObject getSeriesListSync(String baseUrl, String token, String mac,
                                                String categoryId, int page) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
@@ -153,9 +141,7 @@ public class StalkerApiClient {
         return doGet(urlStr, mac, token);
     }
 
-    /**
-     * Bir dizinin sezonlarını getirir
-     */
+
     public static JSONObject getSeriesSeasonsSync(String baseUrl, String token, String mac,
                                                   String movieId) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
@@ -167,9 +153,7 @@ public class StalkerApiClient {
         return doGet(urlStr, mac, token);
     }
 
-    /**
-     * Bir sezonun bölümlerini getirir
-     */
+
     public static JSONObject getSeriesEpisodesSync(String baseUrl, String token, String mac,
                                                    String movieId, int season) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
@@ -183,9 +167,7 @@ public class StalkerApiClient {
         return doGet(urlStr, mac, token);
     }
 
-    /**
-     * Dizi bölümü için stream linki oluşturur
-     */
+
     public static String createSeriesLinkSync(String baseUrl, String token, String mac, String cmd) throws Exception {
         String urlStr = normalizeUrl(baseUrl) + "server/load.php"
                 + "?action=create_link"
@@ -202,11 +184,9 @@ public class StalkerApiClient {
         return extractUrl(cmd);
     }
 
-    // ------------- YARDIMCI METODLAR -------------
 
-    /**
-     * "ffmpeg http://..." veya "ffrt http://..." formatlarından URL'yi çıkarır
-     */
+
+
     public static String extractUrl(String cmd) {
         if (cmd == null) return "";
         cmd = cmd.trim();

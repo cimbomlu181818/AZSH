@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         baglantilariYap();
         olaylariAyarla();
 
-        // Google ile giriş şimdilik desteklenmiyor, gizle
+        
         btnGoogle.setVisibility(View.GONE);
 
         if (trialDoldu) {
@@ -299,7 +299,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // ─── Trial bitti uyarısı (yanıp sönen ikonlu) ────────────────────────────
+    
     private void trialBittiUyariGoster() {
         runOnUiThread(() -> {
             hataGizle();
@@ -401,10 +401,10 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(() -> tvHata.setVisibility(View.GONE));
     }
 
-    // ─── Tam ekran bakım modu ekranı ─────────────────────────────────────────
+    
     private void bakimEkraniniTamGoster(String mesaj) {
         runOnUiThread(() -> {
-            if (findViewById(BAKIM_OVERLAY_ID) != null) return; // zaten gösteriliyor
+            if (findViewById(BAKIM_OVERLAY_ID) != null) return; 
 
             klavyeGizle();
 

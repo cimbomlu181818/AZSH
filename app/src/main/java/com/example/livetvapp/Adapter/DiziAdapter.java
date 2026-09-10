@@ -18,11 +18,11 @@ public class DiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TIP_SEZON = 1;
     private static final int TIP_BOLUM = 2;
 
-    // YENİ RENKLER (Lacivert Tema)
-    private static final int RENK_NORMAL      = 0xFF1A3A5A;   // lacivert buton
-    private static final int RENK_FOCUS       = 0x88FF0000;   // focus için daha açık lacivert
-    private static final int RENK_DIZI_BASLIK = 0xFF1A3A5A;   // dizi başlık butonu
-    private static final int RENK_SEZON       = 0xFF1A3A5A;   // sezon butonu
+    
+    private static final int RENK_NORMAL      = 0xFF1A3A5A;   
+    private static final int RENK_FOCUS       = 0x88FF0000;   
+    private static final int RENK_DIZI_BASLIK = 0xFF1A3A5A;   
+    private static final int RENK_SEZON       = 0xFF1A3A5A;   
 
     private static class ListeOgesi {
         int   tip;
@@ -76,12 +76,12 @@ public class DiziAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         super.onDetachedFromRecyclerView(recyclerView);
         if (this.recyclerViewRef == recyclerView) this.recyclerViewRef = null;
     }
-    /** Silinen alt öğeler focus'taysa, focus'u kapanan üst satıra geri getirir. */
+    
     private void focusiKorumayaAl(int gosterimarPozisyon) {
         if (recyclerViewRef == null) return;
         View odaklanan = recyclerViewRef.getFocusedChild();
         boolean focusKayboldu = (odaklanan == null);
-        if (!focusKayboldu) return; // odak zaten kalan bir öğede, dokunma
+        if (!focusKayboldu) return; 
         recyclerViewRef.post(() -> {
             RecyclerView.ViewHolder holder =
                     recyclerViewRef.findViewHolderForAdapterPosition(gosterimarPozisyon);

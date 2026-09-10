@@ -18,17 +18,17 @@ public class PiPHelper {
     public boolean enterPictureInPictureMode() {
         if (activity == null) return false;
 
-        // PiP sadece Android 8.0 (API 26) ve üzerinde desteklenir
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
-                // 16:9 aspect ratio için PiP parametreleri
+                
                 Rational aspectRatio = new Rational(16, 9);
 
                 PictureInPictureParams.Builder paramsBuilder =
                         new PictureInPictureParams.Builder()
                                 .setAspectRatio(aspectRatio);
 
-                // Android 12 ve üzerinde auto-enter desteği
+                
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     paramsBuilder.setAutoEnterEnabled(true);
                 }
@@ -66,10 +66,10 @@ public class PiPHelper {
         isInPiPMode = isInPictureInPictureMode;
 
         if (isInPictureInPictureMode) {
-            // PiP moduna girildi - UI öğelerini gizle
+            
             Log.d("PiPHelper", "PiP moduna girildi");
         } else {
-            // PiP modundan çıkıldı - UI öğelerini geri göster
+            
             Log.d("PiPHelper", "PiP modundan çıkıldı");
         }
     }

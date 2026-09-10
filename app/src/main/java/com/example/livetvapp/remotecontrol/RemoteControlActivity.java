@@ -18,7 +18,7 @@ public class RemoteControlActivity extends AppCompatActivity {
     private TextView statusText;
     private RemoteDevice targetDevice;
 
-    // Klavye modu bileşenleri
+    
     private View keyboardPanel;
     private EditText etRemoteInput;
     private boolean isKeyboardMode = false;
@@ -71,15 +71,15 @@ public class RemoteControlActivity extends AppCompatActivity {
         findViewById(R.id.btnForward).setOnClickListener(v -> sendCommand("FORWARD"));
         findViewById(R.id.btnMute).setOnClickListener(v -> sendCommand("MUTE"));
         findViewById(R.id.btnKanallar).setOnClickListener(v -> sendCommand("KANALLAR"));
-        // Klavye modu butonu
+        
         findViewById(R.id.btnKeyboardMode).setOnClickListener(v -> startKeyboardMode());
 
-        // Klavye paneli ve içindeki EditText
+        
         keyboardPanel = findViewById(R.id.keyboardPanel);
         etRemoteInput = findViewById(R.id.etRemoteInput);
         findViewById(R.id.btnCloseKeyboard).setOnClickListener(v -> stopKeyboardMode());
 
-        // EditText değişikliklerini anlık gönder
+        
         etRemoteInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -103,13 +103,13 @@ public class RemoteControlActivity extends AppCompatActivity {
         keyboardPanel.setVisibility(View.VISIBLE);
         etRemoteInput.requestFocus();
 
-        // Sistem klavyesini aç
+        
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.showSoftInput(etRemoteInput, InputMethodManager.SHOW_IMPLICIT);
         }
 
-        // TV'ye klavye modu başlangıcını bildir
+        
         sendCommand("START_KEYBOARD_MODE", "");
         statusText.setText("⌨️ Klavye modu aktif - TV'de metin kutusuna tıklayın");
     }
@@ -121,13 +121,13 @@ public class RemoteControlActivity extends AppCompatActivity {
         keyboardPanel.setVisibility(View.GONE);
         etRemoteInput.setText("");
 
-        // Sistem klavyesini kapat
+        
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (imm != null && getCurrentFocus() != null) {
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
 
-        // TV'ye klavye modu sonunu bildir
+        
         sendCommand("END_KEYBOARD_MODE", "");
         statusText.setText("Bağlandı: " + targetDevice.getName());
     }

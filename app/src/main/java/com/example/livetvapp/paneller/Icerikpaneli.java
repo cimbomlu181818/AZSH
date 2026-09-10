@@ -18,7 +18,7 @@ public class Icerikpaneli {
     public static final String TIP_FILM     = "MOVIE";
     public static final String TIP_DIZI     = "SERIES";
 
-    // İçerik etiketleri - daha modern simgeler
+    
     private static final List<String> ETIKETLER = Arrays.asList(
             "📡 CANLI TV",
             "🎬 FİLMLER",
@@ -87,7 +87,7 @@ public class Icerikpaneli {
             }
         });
 
-        // ETIKETLER'i KategoriItem listesine çevir
+        
         List<KategoriItem> etiketItems = new ArrayList<>();
         for (String etiket : ETIKETLER) {
             etiketItems.add(new KategoriItem(etiket, ""));

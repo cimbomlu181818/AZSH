@@ -205,7 +205,7 @@ public class OzelKlavye {
         if (hedefEditText != null) hedefEditText.requestFocus();
     }
 
-    // AramaPaneli'nin etArama key listener'ından çağrılır
+
     public boolean handleCursorKey(int keyCode) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
             if (kursorPozisyon < 0 && hedefEditText != null)

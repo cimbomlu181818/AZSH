@@ -50,7 +50,7 @@ public class StalkerManager {
 
     private void syncPortalInternal(StalkerPortal portal, SyncListener listener) {
         try {
-            // 1. Token
+
             String token = StalkerTokenCache.getInstance().getToken(portal.getId());
             if (token == null) {
                 JSONObject handshake = StalkerApiClient.handshakeSync(portal.getPortalUrl(), portal.getMacAddress());
@@ -75,14 +75,14 @@ public class StalkerManager {
             List<Channel> allChannels = new ArrayList<>();
             String sourceName = "Stalker:" + portal.getName();
 
-            // 2. LIVE (tüm kanallar)
+
             allChannels.addAll(fetchLiveChannels(portal, finalToken, sourceName));
 
-            // 3. VOD (sadece 1. sayfa + ilerleme kaydet)
-            //allChannels.addAll(fetchFirstPageOnly(portal, finalToken, sourceName, "vod", "MOVIE"));
 
-            // 4. SERIES (sadece 1. sayfa + ilerleme kaydet)
-           // allChannels.addAll(fetchFirstPageOnly(portal, finalToken, sourceName, "series", "SERIES"));
+
+
+
+
 
             if (allChannels.isEmpty()) {
                 mainHandler.post(() -> listener.onError("Hiç içerik bulunamadı"));
@@ -116,7 +116,7 @@ public class StalkerManager {
         }
     }
 
-    // LIVE – tamamen mevcut metod (değişmedi)
+
     private List<Channel> fetchLiveChannels(StalkerPortal portal, String token, String sourceName) {
         List<Channel> list = new ArrayList<>();
         try {
@@ -156,11 +156,7 @@ public class StalkerManager {
         return list;
     }
 
-    /**
-     * VOD veya Series için yalnızca ilk sayfayı getirir.
-     * Her kategori için categoryId'yi de StalkerCategoryProgress'e kaydeder —
-     * bu sayede StalkerPageFetcher sonraki sayfaları API'den çekebilir.
-     */
+
     private List<Channel> fetchFirstPageOnly(StalkerPortal portal, String token,
                                              String sourceName, String type, String contentType) {
         List<Channel> list = new ArrayList<>();
@@ -174,7 +170,7 @@ public class StalkerManager {
                 String catId   = cat[0];
                 String catName = cat[1];
 
-                // API'den 1. sayfayı (page=0) çek
+
                 JSONObject resp;
                 if ("vod".equals(type)) {
                     resp = StalkerApiClient.getVodListSync(
@@ -200,7 +196,7 @@ public class StalkerManager {
                 int totalPages = (int) Math.ceil((double) totalItems / maxPageItems);
                 if (totalPages <= 0) totalPages = 1;
 
-                // İlerleme kaydını güncelle — categoryId de kaydediliyor
+
                 StalkerCategoryProgressDao progressDao =
                         AppDatabase.getInstance(context).stalkerCategoryProgressDao();
                 StalkerCategoryProgress progress =
@@ -208,14 +204,14 @@ public class StalkerManager {
                 if (progress == null) {
                     progress = new StalkerCategoryProgress(sourceName, catName);
                 }
-                progress.setCategoryId(catId);          // <-- YENİ: API sayfa istekleri için
+                progress.setCategoryId(catId);
                 progress.setLastFetchedPage(0);
                 progress.setTotalPages(totalPages);
                 progress.setTotalItems(totalItems);
                 progress.setLastSyncTime(System.currentTimeMillis());
                 progressDao.insert(progress);
 
-                // Kanalları parse et
+
                 int basePosition = list.size();
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject item = data.optJSONObject(i);
@@ -227,8 +223,8 @@ public class StalkerManager {
                     if (cmd.isEmpty() && id.isEmpty()) continue;
                     String streamUrl = StalkerApiClient.extractUrl(cmd);
                     if (streamUrl.isEmpty()) {
-                        // Stalker API, SERIES veya VOD için 'cmd' alanı vermez; sadece 'id' verir.
-                        // Placeholder URL oluşturup daha sonra oynatma anında createLink ile çözüyoruz.
+
+
                         String itemId = item.optString("id", "");
                         if (!itemId.isEmpty()) {
                             if ("vod".equals(type)) {
@@ -255,7 +251,7 @@ public class StalkerManager {
         return list;
     }
 
-    // Kategorileri al – VOD / SERIES için
+
     private List<String[]> fetchCategories(StalkerPortal portal, String token, String type) {
         List<String[]> result = new ArrayList<>();
         try {
@@ -293,7 +289,7 @@ public class StalkerManager {
         return result;
     }
 
-    // LIVE kanal parse (mevcut)
+
     private List<Channel> parseChannels(JSONObject channelsData,
                                         java.util.Map<String, String> genreMap,
                                         String sourceName,

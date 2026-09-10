@@ -862,9 +862,9 @@ public class GizlePaneli {
             android.content.SharedPreferences prefs =
                     activity.getSharedPreferences("kategori_siralama", Context.MODE_PRIVATE);
             Map<String, Integer> siraMap = new LinkedHashMap<>();
-            // Her kategoriye sıradaki indeksini varsayılan sıra olarak ata
-            // (tumKat zaten MIN(position) ile sıralı geliyor — bu sırayı koruruz)
-            // Varsayılan sıra: önce LIVE, sonra MOVIE, sonra SERIES
+            
+            
+            
             for (int idx = 0; idx < tumKat.size(); idx++) {
                 String kat = tumKat.get(idx);
                 int grupOnceligı;
@@ -874,19 +874,19 @@ public class GizlePaneli {
                 else                              grupOnceligı = 3;
                 siraMap.put(kat, grupOnceligı * 100000 + idx);
             }
-            // SiralamaPaneli "m3uAdi###kategoriAdi###m3uAdi###kategoriAdi..." formatında kaydediyor
-            // Her çift: [0]=m3uAdi, [1]=kategoriAdi
+            
+            
             String[] turKodlari = {"LIVE", "MOVIE", "SERIES"};
             for (String turKodu : turKodlari) {
                 String kayit = prefs.getString(turKodu + "_sirasi", null);
                 if (kayit == null || kayit.isEmpty()) continue;
                 String[] parcalar = kayit.split("###");
-                // parcalar: [m3uAdi, katAdi, m3uAdi, katAdi, ...]
+                
                 int siraNo = 0;
                 for (int i = 1; i < parcalar.length; i += 2) {
                     String katAdi = parcalar[i].trim();
                     if (!katAdi.isEmpty() && siraMap.containsKey(katAdi)) {
-                        // Kullanıcı sıralaması varsa ve daha küçük indeksse güncelle
+                        
                         if (siraNo < siraMap.get(katAdi)) {
                             siraMap.put(katAdi, siraNo);
                         }

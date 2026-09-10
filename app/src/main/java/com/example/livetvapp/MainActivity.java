@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private AppDatabase     database;
     private ApiHelper       apiHelper;
 
-    // ─── Server değişkenleri ──────────────────────────────────────────────
+    
     private com.example.livetvapp.dosyatransferi.RemoteControlServer remoteServer;
     private FileTransferServer fileServer;
-    private RemoteCommandServer remoteCommandServer;  // YENİ
+    private RemoteCommandServer remoteCommandServer;  
     public boolean isRemoteClientConnected() {
         return remoteCommandServer != null && remoteCommandServer.hasActiveClient();
     }
@@ -44,34 +44,34 @@ public class MainActivity extends AppCompatActivity {
     public void setDosyaSeciciAktif(boolean aktif) {
         dosyaSeciciAktif = aktif;
     }
-    // Aktif metin kutusu (klavye modu için)
+    
     private EditText activeEditText = null;
 
-    // ─── Periyodik kontrol için ──────────────────────────────────────────────
+    
     private final Handler  kontrolHandler  = new Handler(Looper.getMainLooper());
     private       Runnable kontrolRunnable10;
     private       Runnable kontrolRunnable20;
 
-    private static final long DAK_10 = 10 * 60 * 1000L; // 10 dakika (ms)
-    private static final long DAK_20 = 20 * 60 * 1000L; // 20 dakika (ms)
+    private static final long DAK_10 = 10 * 60 * 1000L; 
+    private static final long DAK_20 = 20 * 60 * 1000L; 
 
-    // ────────────────────────────────────────────────────────────────────────
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Cihaz tipini tespit et ve log'a yaz
+        
         String deviceType = DeviceDetector.getDeviceTypeString(this);
         Log.d("DEVICE_TYPE", "Cihaz Tipi: " + deviceType);
         System.out.println("📱 Cihaz Tipi: " + deviceType);
 
-        // Telefon değilse (TV/Tablet) sunucu modunda çalışacağını belirt
+        
         if (!DeviceDetector.isPhone(this)) {
             Log.d("DEVICE_TYPE", "→ SUNUCU MODU (kontrol edilen cihaz)");
         } else {
             Log.d("DEVICE_TYPE", "→ İSTEMCİ MODU (kontrol eden cihaz)");
         }
 
-        // 🔐 Giriş ve erişim kontrolü
+        
         apiHelper = new ApiHelper();
 
         SharedPreferences girisTercihleri = getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean erisim = sonuc.optBoolean("erisim", false);
 
                 if (erisim) {
-                    // devam et
+                    
                 } else if ("mail_dogrulanmadi".equals(durum)) {
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();
@@ -133,21 +133,21 @@ public class MainActivity extends AppCompatActivity {
         anakontrol = new Anakontrol(this);
         anakontrol.baslat();
 
-        // ✅ Server'ları başlat (MainActivity açıkken çalışır)
+        
         startRemoteServer();
         startFileServer();
 
-        // 🔐 10. ve 20. dakika arka plan erişim kontrolleri başlat
+        
         periyodikKontrolBaslat();
 
-        // ✅ YENİ: Telefon DEĞİLSE (Tablet/TV ise) RemoteControlServer'ı otomatik başlat
+        
         if (!DeviceDetector.isPhone(this)) {
             startRemoteControlServer();
         }
     }
 
-    // ─── RemoteControlServer Yönetimi (YENİ) ─────────────────────────────────
-// MainActivity.java içinde startRemoteControlServer() metodunu aşağıdakiyle değiştir:
+    
+
 
     private void startRemoteControlServer() {
         if (remoteCommandServer == null) {
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                             });
                         }
                     });
-            // Dosya seçici durum dinleyicisi
+            
             androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this)
                     .registerReceiver(
                             new android.content.BroadcastReceiver() {
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             remoteCommandServer = null;
         }
     }
-    // Dialog içinde olup olmadığını kontrol et
+    
     private boolean isInsideDialog(View view) {
         ViewParent parent = view.getParent();
         while (parent != null) {
@@ -213,13 +213,13 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
     private void handleRemoteCommand(String command, String data) {
-        // Broadcast'i HER ZAMAN gönder (DosyaSecici dinleyebilsin)
+        
         android.content.Intent broadcastIntent = new android.content.Intent("com.example.livetvapp.REMOTE_COMMAND");
         broadcastIntent.putExtra("command", command);
         broadcastIntent.putExtra("data", data);
         androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 
-        // DosyaSecici açıksa Anakontrol'e gitmesin
+        
         if (dosyaSeciciAktif) return;
         View focused = getCurrentFocus();
         if (focused != null && isInsideDialog(focused)) {
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case "START_KEYBOARD_MODE":
-                // mevcut focused değişkenini kullan, yeni tanımlama yapma
+                
                 if (focused == null) focused = getCurrentFocus();
                 if (focused instanceof EditText) {
                     activeEditText = (EditText) focused;
@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Yardımcı metod
+    
     private int getKeyCodeFromCommand(String command) {
         switch (command) {
             case "DPAD_UP": return KeyEvent.KEYCODE_DPAD_UP;
@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // ─── Server Yönetimi (Mevcut) ───────────────────────────────────────────
+    
     private void startRemoteServer() {
         if (remoteServer == null) {
             remoteServer = new com.example.livetvapp.dosyatransferi.RemoteControlServer(this);
@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // ─── 10. ve 20. dakika kontrolleri ──────────────────────────────────────
+    
     private void periyodikKontrolBaslat() {
         kontrolRunnable10 = () -> erisimKontrolYap();
         kontrolRunnable20 = () -> erisimKontrolYap();
@@ -411,12 +411,12 @@ public class MainActivity extends AppCompatActivity {
         if (kontrolRunnable20 != null) kontrolHandler.removeCallbacks(kontrolRunnable20);
     }
 
-    // ─── Cihaz kimliği ─────────────────────────────────────────────────────
+    
     private String cihazIdGetir() {
         return android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
     }
 
-    // ─── Erişim kontrol metodu ───────────────────────────────────────────────
+    
     private void erisimKontrolYap() {
         if (apiHelper == null) return;
 
@@ -436,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean erisim = sonuc.optBoolean("erisim", false);
 
                 if (erisim) {
-                    /* her şey yolunda */
+                    
                 } else if ("mail_dogrulanmadi".equals(durum)) {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -462,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // ────────────────────────────────────────────────────────────────────────
+    
     @Override
     public void onPictureInPictureModeChanged(
             boolean isInPictureInPictureMode, Configuration newConfig) {
@@ -545,21 +545,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Uygulama kapanınca kontrolleri iptal et — bellek sızıntısı olmasın
+        
         periyodikKontrolIptal();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        // ✅ Server'ları durdur
+        
         stopRemoteServer();
         stopFileServer();
-        stopRemoteControlServer();  // YENİ
+        stopRemoteControlServer();  
 
         if (anakontrol != null) {
             anakontrol.temizlikYap();
         }
     }
 
-    // ─── Bakım ekranı ─────────────────────────────────────────────────────────
+    
     private void bakimEkraniniGoster(String mesaj, String url) {
         runOnUiThread(() -> {
             android.widget.FrameLayout kaplama = new android.widget.FrameLayout(this);
@@ -637,7 +637,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // YENİ: Anakontrol'e erişim için (opsiyonel)
+    
     public Anakontrol getAnakontrol() {
         return anakontrol;
     }

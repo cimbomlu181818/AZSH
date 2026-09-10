@@ -31,13 +31,13 @@ public class NetworkScanner {
     private AtomicBoolean isScanning = new AtomicBoolean(false);
     private DatagramSocket currentSocket;
 
-    // Mevcut callback (eski sistem)
+    
     public interface ScanCallback {
         void onDevicesFound(List<RemoteDevice> devices);
         void onScanFailed(String error);
     }
 
-    // Yeni gerçek zamanlı callback
+    
     public interface RealTimeScanCallback {
         void onDeviceFound(RemoteDevice device);
         void onScanComplete(List<RemoteDevice> devices);
@@ -49,7 +49,7 @@ public class NetworkScanner {
         Log.d(TAG, "🔧 NetworkScanner oluşturuldu");
     }
 
-    // ✅ GERÇEK ZAMANLI TARAMA - DÜZELTİLMİŞ VERSİYON
+    
     public void scanForDevicesRealtime(RealTimeScanCallback callback) {
         if (isScanning.get()) {
             Log.d(TAG, "⚠️ Tarama zaten devam ediyor");
@@ -63,7 +63,7 @@ public class NetworkScanner {
         executorService.execute(() -> {
             DatagramSocket socket = null;
             try {
-                // WiFi kontrolü
+                
                 WifiManager wifiManager = (WifiManager) context.getApplicationContext()
                         .getSystemService(Context.WIFI_SERVICE);
 
@@ -87,7 +87,7 @@ public class NetworkScanner {
                         (currentIp >> 24 & 0xff));
                 Log.d(TAG, "📡 Mevcut IP: " + currentIpStr);
 
-                // Socket oluştur
+                
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
                 socket.setSoTimeout(2000);
@@ -96,10 +96,10 @@ public class NetworkScanner {
                 String broadcastAddress = getBroadcastAddress();
                 Log.d(TAG, "📡 Broadcast adresi: " + broadcastAddress);
 
-                // Discovery mesajını hazırla
+                
                 byte[] buffer = DISCOVERY_MESSAGE.getBytes();
 
-                // Normal broadcast
+                
                 try {
                     DatagramPacket packet = new DatagramPacket(
                             buffer, buffer.length,
@@ -112,7 +112,7 @@ public class NetworkScanner {
                     Log.e(TAG, "Broadcast gönderme hatası: " + e.getMessage());
                 }
 
-                // Global broadcast (255.255.255.255)
+                
                 try {
                     DatagramPacket globalPacket = new DatagramPacket(
                             buffer, buffer.length,
@@ -144,13 +144,13 @@ public class NetworkScanner {
                         if (response.startsWith(RESPONSE_PREFIX)) {
                             String deviceName = response.substring(RESPONSE_PREFIX.length());
 
-                            // Kendi cihazını atla
+                            
                             if (senderIP.equals(currentIpStr)) {
                                 Log.d(TAG, "📡 Kendi cihazım, atlanıyor: " + senderIP);
                                 continue;
                             }
 
-                            // Aynı IP'den tekrar ekleme
+                            
                             boolean exists = false;
                             for (RemoteDevice d : foundDevices) {
                                 if (d.getIpAddress().equals(senderIP)) {
@@ -164,7 +164,7 @@ public class NetworkScanner {
                                 foundDevices.add(device);
                                 Log.d(TAG, "✅ YENİ CİHAZ BULUNDU: " + deviceName + " - " + senderIP);
 
-                                // ✅ ANLIK CALLBACK - CİHAZ BULUNUR BULUNMAZ
+                                
                                 final RemoteDevice finalDevice = device;
                                 mainHandler.post(() -> {
                                     Log.d(TAG, "📢 onDeviceFound callback çağrılıyor: " + finalDevice.getName());
@@ -173,7 +173,7 @@ public class NetworkScanner {
                             }
                         }
                     } catch (SocketTimeoutException e) {
-                        // Normal timeout, devam et
+                        
                         Log.d(TAG, "⏳ Socket timeout, beklemeye devam...");
                     } catch (Exception e) {
                         if (isScanning.get()) {
@@ -182,7 +182,7 @@ public class NetworkScanner {
                     }
                 }
 
-                // Tarama tamamlandı
+                
                 Log.d(TAG, "✅ Tarama tamamlandı. Toplam " + foundDevices.size() + " cihaz bulundu");
                 final List<RemoteDevice> finalDevices = new ArrayList<>(foundDevices);
                 mainHandler.post(() -> callback.onScanComplete(finalDevices));
@@ -204,7 +204,7 @@ public class NetworkScanner {
         });
     }
 
-    // Taramayı durdur
+    
     public void stopScan() {
         Log.d(TAG, "⏹️ Tarama durduruluyor...");
         isScanning.set(false);
@@ -217,7 +217,7 @@ public class NetworkScanner {
         }
     }
 
-    // Eski metod (uyumluluk için)
+    
     public void scanForDevices(ScanCallback callback) {
         Log.d(TAG, "🔍 Cihaz taraması başlatılıyor...");
         executorService.execute(() -> {

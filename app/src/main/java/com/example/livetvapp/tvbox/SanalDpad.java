@@ -31,7 +31,7 @@ public class SanalDpad {
     }
 
     private void olustur() {
-        // Engel overlay (arka plan tıklamalarını engellemek için)
+        
         engelOverlay = new FrameLayout(activity);
         engelOverlay.setLayoutParams(new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -40,7 +40,7 @@ public class SanalDpad {
         engelOverlay.setVisibility(View.GONE);
         activity.addContentView(engelOverlay, engelOverlay.getLayoutParams());
 
-        // Ana konteyner
+        
         containerView = new FrameLayout(activity);
         FrameLayout.LayoutParams containerParams = new FrameLayout.LayoutParams(
                 dp(170), FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -48,27 +48,27 @@ public class SanalDpad {
         containerParams.rightMargin = dp(8);
         containerView.setLayoutParams(containerParams);
 
-        // Dikey buton grubu
+        
         LinearLayout dikey = new LinearLayout(activity);
         dikey.setOrientation(LinearLayout.VERTICAL);
         dikey.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        // Ana butonlar (1.3x büyütülmüş - 52x52)
+        
         Button btnyukari = butonOlustur("▲");
         Button btnAsagi = butonOlustur("▼");
         Button btnSol = butonOlustur("◀");
         Button btnSag = butonOlustur("▶");
         Button btnMerkez = butonMerkezOlustur("●");
 
-        // Yatay orta satır
+        
         LinearLayout orta = new LinearLayout(activity);
         orta.setOrientation(LinearLayout.HORIZONTAL);
         orta.setGravity(Gravity.CENTER);
 
-        // Geri butonu (1.3x büyütülmüş - 117x39)
+        
         Button btnGeri = butonGeriOlustur("✕ Geri");
 
-        // Butonları yerleştir
+        
         orta.addView(btnSol);
         orta.addView(btnMerkez);
         orta.addView(btnSag);
@@ -80,7 +80,7 @@ public class SanalDpad {
 
         containerView.addView(dikey);
 
-        // Tıklama dinleyicileri
+        
         btnyukari.setOnClickListener(v -> tusGonder(KeyEvent.KEYCODE_DPAD_UP));
         btnAsagi.setOnClickListener(v -> tusGonder(KeyEvent.KEYCODE_DPAD_DOWN));
         btnSol.setOnClickListener(v -> tusGonder(KeyEvent.KEYCODE_DPAD_LEFT));
@@ -92,16 +92,13 @@ public class SanalDpad {
         activity.addContentView(containerView, containerView.getLayoutParams());
     }
 
-    /**
-     * Ana buton oluşturucu (▲, ▼, ◀, ▶)
-     * Boyut: 52x52 dp (1.3x büyütülmüş)
-     */
+    
     private Button butonOlustur(String metin) {
         Button btn = new Button(activity);
         btn.setText(metin);
-        btn.setTextSize(22);  // 18sp → 22sp (1.22x)
-        btn.setTextColor(0xFFEEF5FF);  // Açık mavi-beyaz
-        btn.setBackgroundColor(0xFF2A2A4A);  // Lacivert/mor karışımı
+        btn.setTextSize(22);  
+        btn.setTextColor(0xFFEEF5FF);  
+        btn.setBackgroundColor(0xFF2A2A4A);  
         btn.setAllCaps(false);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(52), dp(52));
@@ -110,7 +107,7 @@ public class SanalDpad {
         btn.setPadding(0, 0, 0, 0);
         btn.setFocusable(false);
 
-        // Hover efekti için arka plan değişimi
+        
         btn.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 v.setBackgroundColor(0xFF3A3A6A);
@@ -122,16 +119,13 @@ public class SanalDpad {
         return btn;
     }
 
-    /**
-     * Merkez butonu (●)
-     * Boyut: 52x52 dp, biraz daha parlak
-     */
+    
     private Button butonMerkezOlustur(String metin) {
         Button btn = new Button(activity);
         btn.setText(metin);
-        btn.setTextSize(26);  // 24sp → 26sp
+        btn.setTextSize(26);  
         btn.setTextColor(0xFFEEF5FF);
-        btn.setBackgroundColor(0xFF3A3A6A);  // Merkez butonu daha parlak
+        btn.setBackgroundColor(0xFF3A3A6A);  
         btn.setAllCaps(false);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(52), dp(52));
@@ -151,14 +145,11 @@ public class SanalDpad {
         return btn;
     }
 
-    /**
-     * Geri butonu (✕ Geri)
-     * Boyut: 117x39 dp (1.3x büyütülmüş)
-     */
+    
     private Button butonGeriOlustur(String metin) {
         Button btn = new Button(activity);
         btn.setText(metin);
-        btn.setTextSize(13);  // 11sp → 13sp
+        btn.setTextSize(13);  
         btn.setTextColor(0xFFEEF5FF);
         btn.setBackgroundColor(0xFF2A2A4A);
         btn.setAllCaps(false);
@@ -203,7 +194,7 @@ public class SanalDpad {
     }
 
     private void tusGonder(int keyCode) {
-        // Sıralama paneli aktifse özel işlem
+        
         if (siralamaPaneli != null && siralamaPaneli.isVisible()) {
             androidx.recyclerview.widget.RecyclerView rv = siralamaPaneli.getRecyclerView();
             if (rv != null) {
@@ -236,7 +227,7 @@ public class SanalDpad {
             }
         }
 
-        // Normal dpad işlemi
+        
         dpad.handleKeyDownDokunmatik(keyCode);
     }
 }

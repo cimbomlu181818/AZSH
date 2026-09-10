@@ -183,24 +183,24 @@ public class KanalAdapter extends RecyclerView.Adapter<KanalAdapter.KanalViewHol
         }
 
         void bind(Channel kanal, int position) {
-            // Sıra numarası (position+1) ve görünen adı birleştir
+            
             String ad = gorunumAdi(kanal);
             button.setText((position + 1) + " - " + ad);
             button.setTag(kanal);
 
             boolean isAktif = kanal.getUrl() != null && kanal.getUrl().equals(aktifKanalUrl);
 
-            // Aktif kanal ve normal kanal AYNI drawable'ı kullanıyor
+            
             button.setBackgroundResource(R.drawable.kanal_button_background);
             button.setScaleX(1.0f);
             button.setScaleY(1.0f);
             button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
             button.setTypeface(button.getTypeface(), Typeface.NORMAL);
 
-            // Focus değişim dinleyicisi
+            
             button.setOnFocusChangeListener((v, hasFocus) -> {
                 if (hasFocus) {
-                    // Focus kazanıldığında - parlak buton
+                    
                     button.setBackgroundResource(R.drawable.kanal_button_focused);
                     button.setScaleX(1.02f);
                     button.setScaleY(1.02f);
@@ -213,7 +213,7 @@ public class KanalAdapter extends RecyclerView.Adapter<KanalAdapter.KanalViewHol
                         focusDegistiListener.onFocusDegisti(kanal);
                     }
                 } else {
-                    // Focus kaybedildiğinde - normal butona dön
+                    
                     button.setBackgroundResource(R.drawable.kanal_button_background);
                     button.setScaleX(1.0f);
                     button.setScaleY(1.0f);
@@ -222,7 +222,7 @@ public class KanalAdapter extends RecyclerView.Adapter<KanalAdapter.KanalViewHol
                 }
             });
 
-            // Tıklama dinleyicisi
+            
             button.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
                 if (pos == RecyclerView.NO_POSITION) return;

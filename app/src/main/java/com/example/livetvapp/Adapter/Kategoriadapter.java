@@ -119,7 +119,7 @@ public class Kategoriadapter extends RecyclerView.Adapter<Kategoriadapter.Katego
             button.setFocusableInTouchMode(true);
             button.setClickable(true);
 
-            // DEĞİŞİKLİK BURADA: Tüm butonlar aynı renkte
+            
             button.setBackgroundColor(RENK_NORMAL);
 
             button.setOnFocusChangeListener((v, hasFocus) -> {
@@ -129,7 +129,7 @@ public class Kategoriadapter extends RecyclerView.Adapter<Kategoriadapter.Katego
                         focusDegisti.onFocusDegisti(item.getKategoriAdi());
                     }
                 } else {
-                    // DEĞİŞİKLİK BURADA: Focus kaybedince yine normal renk
+                    
                     v.setBackgroundColor(RENK_NORMAL);
                 }
             });

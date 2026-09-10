@@ -15,12 +15,12 @@ public class KanalListesi {
     private static final String M3U_CHANNEL_PREFIX = "channels_m3u_";
     public static void saveChannelsForM3U(Context context, List<Channel> channels, String m3uName) {
         try {
-            // 🔥 1. Önce bu M3U'ya ait eski kanalları sil (position'lar sıfırlansın)
+            
             AppDatabase db = AppDatabase.getInstance(context);
             db.channelDao().deleteChannelsByM3U(m3uName);
             System.out.println("🗑️ Eski kanallar silindi: " + m3uName);
 
-            // 2. SharedPreferences'a kaydet (mevcut)
+            
             SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             Gson gson = new Gson();
@@ -30,7 +30,7 @@ public class KanalListesi {
             editor.putString(CHANNEL_CACHE_KEY, json);
             editor.apply();
 
-            // 3. Yeni kanalları ekle
+            
             DatabaseHelper dbHelper = new DatabaseHelper(context);
             dbHelper.insertChannels(channels, new DatabaseHelper.OnCompleteListener() {
                 @Override
@@ -122,7 +122,7 @@ public class KanalListesi {
         List<Channel> channels = new ArrayList<>();
         String firstLine = reader.readLine();
         if (firstLine == null || !firstLine.trim().startsWith("#EXTM3U")) {
-            return channels; // Geçerli M3U değil, hemen dur
+            return channels; 
         }
         Channel currentChannel = null;
         String currentExtinfLine = null;

@@ -13,7 +13,7 @@ public class StalkerCategoryProgress {
     private String m3uName;
     @NonNull
     private String category;
-    /** Stalker API'nin beklediği kategori ID'si (örn. "3", "14"). Sonraki sayfa isteklerinde kullanılır. */
+    
     @NonNull
     private String categoryId = "";
     private int lastFetchedPage;
@@ -33,7 +33,7 @@ public class StalkerCategoryProgress {
         this.lastSyncTime = System.currentTimeMillis();
     }
 
-    // Getters & Setters
+    
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
     @NonNull public String getM3uName() { return m3uName; }

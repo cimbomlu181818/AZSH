@@ -47,17 +47,17 @@ public class FileTransferClient {
 
                 OutputStream outputStream = socket.getOutputStream();
 
-                // 1. Dosya adını gönder (UTF-8, null-terminated)
-                // 1. Dosya adını Base64 ile encode et (Türkçe karakterler için)
+                
+                
                 String originalName = file.getName();
                 String encodedName = android.util.Base64.encodeToString(originalName.getBytes("UTF-8"), android.util.Base64.NO_WRAP);
                 byte[] nameBytes = encodedName.getBytes("UTF-8");
                 outputStream.write(nameBytes);
-                outputStream.write(0); // null terminator
+                outputStream.write(0); 
                 Log.d(TAG, "📄 Orijinal ad: " + originalName + " → Encoded: " + encodedName);
                 Log.d(TAG, "📄 Dosya adı gönderildi: " + file.getName());
 
-                // 2. Dosya boyutunu gönder (8 byte, long)
+                
                 long fileSize = file.length();
                 byte[] sizeBytes = new byte[8];
                 sizeBytes[0] = (byte) (fileSize >> 56);
@@ -71,7 +71,7 @@ public class FileTransferClient {
                 outputStream.write(sizeBytes);
                 Log.d(TAG, "📊 Dosya boyutu gönderildi: " + fileSize);
 
-                // 3. Dosya içeriğini gönder
+                
                 FileInputStream fis = new FileInputStream(file);
                 byte[] buffer = new byte[8192];
                 long totalSent = 0;

@@ -175,7 +175,7 @@ public interface ChannelDao {
     @androidx.room.Query("DELETE FROM izleme_pozisyonu WHERE url = :url")
     void pozisyonSil(String url);
 
-    // YENİ: Tüm izleme pozisyonlarını getir (yedekleme için)
+    
     @Query("SELECT * FROM izleme_pozisyonu")
     List<IzlemePozisyonu> getAllPlaybackPositions();
     @Query("SELECT * FROM channels WHERE name = :name AND contentType = 'SERIES' LIMIT 1")

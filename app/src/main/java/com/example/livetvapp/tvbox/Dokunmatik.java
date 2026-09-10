@@ -207,7 +207,7 @@ public class Dokunmatik {
                 else break;
             }
         }
-        // HER İKİ YÖNDE DE (saga=true veya false) Ayarlar menüsünü kapat
+
         gonder(KeyEvent.KEYCODE_BACK);
     }
     private void handleGizlePaneliSwipe(boolean saga) {

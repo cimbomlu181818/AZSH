@@ -228,7 +228,7 @@ public class M3UDurumAdapter extends RecyclerView.Adapter<M3UDurumAdapter.KartVH
                 boolean gunFocus = (butonPoz == 0);
                 btnGuncelle.setEnabled(guncelleAktif);
                 btnGuncelle.setText(kart.kanalGuncelleniyor ? "↻ Güncelleniyor..." : "↻ Güncelle");
-                btnGuncelle.setTextColor(0xFFFFFFFF);  // BEYAZ
+                btnGuncelle.setTextColor(0xFFFFFFFF);  
                 btnGuncelle.setBackgroundColor(gunFocus
                         ? RENK_BTN_FOCUS_GUN
                         : (dosyaMi ? RENK_DOSYA_BTN_GUN : RENK_AKTIF_BTN_GUN));
@@ -240,7 +240,7 @@ public class M3UDurumAdapter extends RecyclerView.Adapter<M3UDurumAdapter.KartVH
                 btnIsmDegistir.setFocusable(false);
                 btnIsmDegistir.setFocusableInTouchMode(false);
                 boolean ismFocus = (butonPoz == 1);
-                btnIsmDegistir.setTextColor(0xFFFFFFFF);  // BEYAZ
+                btnIsmDegistir.setTextColor(0xFFFFFFFF);  
                 btnIsmDegistir.setAlpha(1f);
                 btnIsmDegistir.setBackgroundColor(ismFocus
                         ? RENK_BTN_FOCUS_ISM

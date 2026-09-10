@@ -64,7 +64,7 @@ public class M3UDurumPaneli {
         if (btnTumunuGuncelle != null) {
             btnTumunuGuncelle.setFocusable(false);
             btnTumunuGuncelle.setClickable(false);
-            // Tümünü Güncelle butonu arka plan ve yazı rengi
+
             btnTumunuGuncelle.setBackgroundColor(0xFF2A4A72);
             btnTumunuGuncelle.setTextColor(0xFFFFFFFF);
         }
@@ -263,15 +263,15 @@ public class M3UDurumPaneli {
         String url = m3u.getUrl();
         System.out.println("🔍 [XTREAM-GÜN] kanalListesiGuncelle başladı | pozisyon=" + pozisyon
                 + " | m3u.getName()='" + m3u.getName() + "' | url='" + url + "'");
-// Stalker portalı kontrolü
+
         if (url != null && url.startsWith("stalker:")) {
             String portalUrl = url.substring("stalker:".length());
-            // Portal adını sourceName'den çıkar
+
             String portalAdi = m3u.getName().startsWith("Stalker:")
                     ? m3u.getName().substring("Stalker:".length())
                     : m3u.getName();
 
-            // DB'den portal bilgisini bul
+
             new Thread(() -> {
                 try {
                     com.example.livetvapp.database.AppDatabase db =
@@ -298,7 +298,7 @@ public class M3UDurumPaneli {
                                         @Override
                                         public void onSuccess(int channelCount) {
                                             akillıGuncelle(pozisyon, m3u,
-                                                    new java.util.ArrayList<>() /* güncelleme akillıGuncelle'yi bypass et */);
+                                                    new java.util.ArrayList<>() );
                                             adapter.kanalGuncellemeSonucuGoster(pozisyon,
                                                     "✅ " + channelCount + " içerik güncellendi");
                                             m3uListesi = m3uManager.getAllM3UItems();
@@ -319,7 +319,7 @@ public class M3UDurumPaneli {
             }).start();
             return;
         }
-        // ── 1. Xtream hesabı kayıtlıysa direkt Xtream ile güncelle ──────────────
+
         if (url != null && url.contains("[Xtream]")) {
             String sunucu = url.replace(" [Xtream]", "").trim();
             List<String[]> accounts = XtreamCodesManager.getAccounts(activity);
@@ -352,7 +352,7 @@ public class M3UDurumPaneli {
             return;
         }
 
-        // ── 2. Normal URL — önce M3U parse et, sonra Xtream dene ────────────────
+
         if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
             System.out.println("🔍 [XTREAM-GÜN] Normal URL güncelleme başlatılıyor: " + url);
             new Thread(() -> {
@@ -364,7 +364,7 @@ public class M3UDurumPaneli {
                             return;
                         }
 
-                        // Kalite kontrolü — Xtream denemesi gerekiyor mu?
+
                         String[] kimlik = xtreamKimliginiCikar(url);
                         if (kimlik != null && xtreamDenemesiGerekiyor(yeniKanallar)) {
                             System.out.println("🔍 [XTREAM-GÜN] Kalite zayıf → Xtream deneniyor");
@@ -382,22 +382,22 @@ public class M3UDurumPaneli {
                                         public void onSuccess(List<Channel> xtreamKanallar, String srcName) {
                                             System.out.println("✅ [XTREAM-GÜN] Xtream başarılı → "
                                                     + xtreamKanallar.size() + " kanal");
-                                            // Xtream hesabını kaydet
+
                                             XtreamCodesManager.saveAccount(activity,
                                                     m3u.getName(), server, username, password);
-                                            // M3U url'ini Xtream formatına güncelle
+
                                             handler.post(() -> akillıGuncelle(pozisyon, m3u, xtreamKanallar));
                                         }
                                         @Override
                                         public void onError(String error) {
                                             System.out.println("⚠️ [XTREAM-GÜN] Xtream başarısız → "
                                                     + "normal parse kullanılıyor. Hata: " + error);
-                                            // Xtream çalışmadı, normal parse sonucunu kullan
+
                                             handler.post(() -> akillıGuncelle(pozisyon, m3u, yeniKanallar));
                                         }
                                     });
                         } else {
-                            // Xtream denemesi gerekmiyorsa direkt kaydet
+
                             akillıGuncelle(pozisyon, m3u, yeniKanallar);
                         }
                     });
@@ -413,7 +413,7 @@ public class M3UDurumPaneli {
         adapter.kanalGuncellemeSonucuGoster(pozisyon, "❌ Güncellenebilir kaynak yok");
     }
 
-    // ── Yardımcı: Kalite kontrolü ────────────────────────────────────────────
+
     private boolean xtreamDenemesiGerekiyor(List<Channel> kanallar) {
         if (kanallar == null || kanallar.isEmpty()) return false;
         int toplamKanal = kanallar.size();
@@ -434,7 +434,7 @@ public class M3UDurumPaneli {
         return tumKanallarlive || kategoriZayif;
     }
 
-    // ── Yardımcı: URL'den Xtream kimliği çıkar ───────────────────────────────
+
     private String[] xtreamKimliginiCikar(String urlStr) {
         try {
             java.net.URL parsedUrl = new java.net.URL(urlStr);
@@ -481,7 +481,7 @@ public class M3UDurumPaneli {
                 AppDatabase db = AppDatabase.getInstance(activity);
                 int eskiSayi = db.channelDao().getChannelCountBySource(m3u.getName());
 
-                // Güncelleme öncesi mevcut position değerlerini URL'e göre kaydet
+
                 List<Channel> eskiKanallar = db.channelDao().getAllChannelsByM3U(m3u.getName());
                 java.util.Map<String, Integer> urlPozisyonHaritasi = new java.util.HashMap<>();
                 for (Channel ch : eskiKanallar) {
@@ -490,7 +490,7 @@ public class M3UDurumPaneli {
                     }
                 }
 
-                // Yeni kanallara sourceName ata; URL eşleşiyorsa eski position'ı koru
+
                 for (Channel ch : yeniKanallar) {
                     ch.setSourceName(m3u.getName());
                     Integer eskiPoz = urlPozisyonHaritasi.get(ch.getUrl());

@@ -102,13 +102,11 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
     public boolean isKanalFavoridenAcildi() { return kanalFavoridenAcildi; }
     private boolean kullaniciDurdurdu = false;
     public void setKullaniciDurdurdu(boolean deger) { this.kullaniciDurdurdu = deger; }
-    /**
-     * Video duraklatılmış mı? (MediaPlayer mevcut, oynatmıyor, stream URL geçerli)
-     */
+
     public boolean isVideoPaused() {
         return mediaPlayer != null && kullaniciDurdurdu && aktifStreamUrl != null;
     }
-    // StreamMonitor'dan UI sıfırlama için yardımcı
+
     public void resetUiForRemoteControl() {
         if (!dpadModu) {
             dpadModu = true;
@@ -127,14 +125,12 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
     public boolean isVideoAvailable() {
         return aktifStreamUrl != null && mediaPlayer != null;
     }
-    /**
-     * Duraklatılmış videoyu devam ettir ve bar'daki play butonunu güncelle.
-     */
+
     public void resumeVideo() {
         if (mediaPlayer != null && !mediaPlayer.isPlaying() && aktifStreamUrl != null) {
             mediaPlayer.play();
             if (oynaticiBar != null) {
-                oynaticiBar.updatePlayPauseButton(true); // butonu "⏸" yap
+                oynaticiBar.updatePlayPauseButton(true);
             }
         }
     }
@@ -179,7 +175,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
     public void kutuMargininiBarUstuYap() {
         if (kisayolKutusu == null || oynaticiBar == null) return;
         View barView = oynaticiBar.getPanelView();
-        // Layout tamamlanana kadar bekle (iki post veya postDelayed ile)
+
         barView.post(() -> {
             barView.postDelayed(() -> {
                 int barHeight = barView.getHeight();
@@ -303,7 +299,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
 
             @Override
             public void oncekiSayfayiYukle(String icerikTipi, int offset) {
-                // Kullanılmıyor
+
             }
         });
         kanalPaneli = new normalkanallistesipaneli(activity);
@@ -423,7 +419,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         });
         ayarlarPaneli.setM3UGuncellendiListener(() -> {
             System.out.println("🔄 [ANA] M3U güncellendi → liste yenileniyor");
-            // Cache'ler AyarlarPaneli'nde zaten temizleniyor, ama tekrar temizlemek sorun olmaz
+
             KategoriCache.getInstance().invalidateAll();
             DiziCache.getInstance().invalidateAll();
             diziPaneli.m3uDegisti();
@@ -466,17 +462,17 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         });
         ayarlarPaneli.setOnMenuChangedListener(menu -> {
             if (dpad != null) {
-                // GizlePaneli açıldığında
+
                 if (menu == AyarlarPaneli.MenuSeviyesi.GIZLE_PANELI) {
                     dpad.aktifPanelAyarla(Dpad.AktifPanel.AYARLAR_GIZLE);
                     dpad.guncelleKisayol();
                 }
-                // SiralamaPaneli açıldığında
+
                 else if (menu == AyarlarPaneli.MenuSeviyesi.SIRALAMA_PANELI) {
                     dpad.aktifPanelAyarla(Dpad.AktifPanel.AYARLAR_SIRALAMA);
                     dpad.guncelleKisayol();
                 }
-                // Ana menüye dönüldüğünde (mevcut kod)
+
                 else {
                     Dpad.AktifPanel aktif = dpad.getAktifPanel();
                     if ((aktif == Dpad.AktifPanel.AYARLAR_GIZLE || aktif == Dpad.AktifPanel.AYARLAR_SIRALAMA)
@@ -504,7 +500,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         dpad = new Dpad(activity, kanalPaneli, ayarlarPaneli, kategoriPaneli, icerikPaneli, diziPaneli);
         dpad.setAnakontrol(this);
         aramaPaneli = new AramaPaneli(activity);
-        // MainActivity'den supplier al
+
         if (activity instanceof MainActivity) {
             MainActivity ma = (MainActivity) activity;
             aramaPaneli.setRemoteKontrolSupplier(() -> ma.isRemoteClientConnected());
@@ -646,9 +642,9 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         }
         dokunmatik.setSanalDpad(sanalDpad);
 
-// ---------------------------------------------------------------
-// Kısayol kutusunu oluştur ve ekle (başlangıçta gizli)
-// ---------------------------------------------------------------
+
+
+
         kisayolKutusu = new KisayolKutusu(activity);
         kisayolKutusu.setVisibility(View.GONE);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
@@ -660,7 +656,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         activity.addContentView(kisayolKutusu, lp);
         dpad.setKisayolKutusu(kisayolKutusu);
 
-// Kısayol kutusu margin'ini bar yüksekliğine göre ayarla
+
         oynaticiBar.getPanelView().post(() -> {
             int barHeight = oynaticiBar.getPanelView().getHeight();
             if (barHeight > 0 && kisayolKutusu != null) {
@@ -670,7 +666,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
                 System.out.println("📏 Kısayol kutusu margin ayarlandı: bottomMargin=" + lpKutu.bottomMargin + "px (bar yüksekliği=" + barHeight + "px)");
             }
         });
-// ---------------------------------------------------------------
+
         ayarlarPaneli.setOnShortcutBoxVisibilityChangedListener(visible -> {
             kutuGorunurlugunuGuncelle();
         });
@@ -712,7 +708,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
 
     public void metadataPaneliMarginGuncelle() {
         if (metadataPanel == null || dpad == null) return;
-        // Metadata paneli her zaman sağa sıfır yaslı olsun
+
         metadataPanel.solMarginAyarla(0);
         System.out.println("📐 MetadataPanel margin: 0dp (sağa yaslı)");
     }
@@ -721,7 +717,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
     public void kutuMargininiAktifPaneleGoreAyarla() {
         if (kisayolKutusu == null || oynaticiBar == null) return;
 
-        // Bar görünmüyorsa margin'i varsayılana sıfırla ve çık
+
         if (!oynaticiBar.isVisible()) {
             kutuMargininiSifirla();
             return;
@@ -738,7 +734,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
             boolean seekBarVisible = (seekBarRow != null && seekBarRow.getVisibility() == View.VISIBLE);
             System.out.println("🔍 [MARGIN] barHeight=" + barHeight + ", seekBarVisible=" + seekBarVisible);
 
-            int marginBottom = barHeight; // her durumda bar yüksekliği + 8dp kullanılır
+            int marginBottom = barHeight;
             FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) kisayolKutusu.getLayoutParams();
             lp.bottomMargin = marginBottom + dpToPx(8);
             kisayolKutusu.setLayoutParams(lp);
@@ -748,7 +744,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
     public void kutuMargininiSifirla() {
         if (kisayolKutusu == null) return;
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) kisayolKutusu.getLayoutParams();
-        lp.bottomMargin = dpToPx(20);  // varsayılan margin
+        lp.bottomMargin = dpToPx(20);
         kisayolKutusu.setLayoutParams(lp);
         System.out.println("📏 Kutu margin sıfırlandı: bottomMargin=" + lp.bottomMargin + "px");
     }
@@ -756,7 +752,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
     @Override
     public void onRetryNeeded(String url) {
         System.out.println("🔄 [StreamMonitor] PRE_RETRY: yeniden oynatılıyor: " + aktifStreamUrl);
-        // Restart öncesi mevcut pozisyonu al (dizi/film için)
+
         final long currentPosition = (mediaPlayer != null && mediaPlayer.isPlaying()) ? mediaPlayer.getTime() : 0;
         mainHandler.post(() -> {
             if (aktifStreamUrl == null || aktifStreamUrl.isEmpty()) return;
@@ -766,7 +762,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
                 currentMedia = new Media(libVLC, Uri.parse(aktifStreamUrl));
                 mediaPlayer.setMedia(currentMedia);
                 mediaPlayer.play();
-                // Kaldığı yerden devam et
+
                 if (currentPosition > 0) {
                     mediaPlayer.setTime(currentPosition);
                     bekleyenBaslangicPozisyonu = currentPosition;
@@ -810,7 +806,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         System.out.println("🔴 [ZORUNLU] Mod aktif — 800ms sonra ayarlar paneli açılacak");
         mainHandler.postDelayed(this::ayarlarPaneliniZorunluAc, 800);
     }
-    // YENİ
+
     private void ayarlarPaneliniZorunluAc() {
         if (!m3uZorunluAcilisModu) return;
         System.out.println("🔴 [ZORUNLU] Ayarlar paneli açılıyor → M3U Yükle ekranına yönlendiriliyor");
@@ -821,7 +817,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
             View pv = ayarlarPaneli.getPanelView();
             if (pv != null) pv.setVisibility(View.VISIBLE);
         }
-        // Ayarlar açıldıktan sonra direkt M3U Yükle menüsüne geç
+
         mainHandler.postDelayed(() -> {
             ayarlarPaneli.m3uYuklePanelineGit();
         }, 300);
@@ -1511,7 +1507,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
                 if (spUrl != null) spUrl.veriGecersizKil();
                 diziPaneli.m3uDegisti();
                 diziPaneli.switchToNormalMode();
-                ilkAcilisOtomatikOynat = true;  // ← BU SATIR EKLENDİ
+                ilkAcilisOtomatikOynat = true;
                 System.out.println("🔍 [YENIM3U-URL] ilkAcilisOtomatikOynat=" + ilkAcilisOtomatikOynat);
                 System.out.println("🔍 [LOADCHANNELS] ilkAcilisOtomatikOynat=" + ilkAcilisOtomatikOynat + " lastUrl=" + getLastPlayedUrl());
                 loadChannelsFromDatabase();
@@ -1833,7 +1829,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
 
     private void oynatKanal(Channel kanal) {
         if (kanal == null || mediaPlayer == null || libVLC == null) return;
-        // Stalker placeholder URL çözümü
+
         if (kanal.getUrl() != null &&
                 (kanal.getUrl().startsWith("vod:") ||
                         kanal.getUrl().startsWith("series:") ||
@@ -1869,7 +1865,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
             currentMedia = new Media(libVLC, Uri.parse(kanal.getUrl()));
             mediaPlayer.setMedia(currentMedia);
             mediaPlayer.play();
-// Aspect ratio ayarını yeniden uygula (kanal değişiminde korunsun)
+
             if (aspectRatioManager != null) {
                 aspectRatioManager.refreshAspectRatio();
             }
@@ -1929,7 +1925,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
 
                 final StalkerPortal portal = hedefPortal;
 
-                // Token al
+
                 String token = StalkerTokenCache.getInstance().getToken(portal.getId());
                 if (token == null || token.isEmpty()) {
                     org.json.JSONObject hs = StalkerApiClient.handshakeSync(
@@ -1962,7 +1958,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
                     gercekUrl = StalkerApiClient.createSeriesLinkSync(
                             portal.getPortalUrl(), token, portal.getMacAddress(), cmd);
                 } else {
-                    // Canlı TV: http://localhost/ch/... → ITV create_link
+
                     String cmd = "ffmpeg " + placeholder;
                     gercekUrl = StalkerApiClient.createLinkSync(
                             portal.getPortalUrl(), token, portal.getMacAddress(), cmd);
@@ -1980,7 +1976,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
                 }
 
                 final String finalUrl = gercekUrl;
-                // Gerçek URL ile kanalı oynat
+
                 Channel cozulmus = new Channel(kanal.getName(), finalUrl,
                         kanal.getCategory(), kanal.getLogo(), kanal.getSourceName());
                 cozulmus.setContentType(kanal.getContentType());
@@ -2017,7 +2013,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
             currentMedia = new Media(libVLC, Uri.parse(url));
             mediaPlayer.setMedia(currentMedia);
             mediaPlayer.play();
-// Aspect ratio ayarını yeniden uygula
+
             if (aspectRatioManager != null) {
                 aspectRatioManager.refreshAspectRatio();
             }
@@ -2060,7 +2056,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
 
     public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN && dpadModu) {
-            // Dokunma algılandı, dpad modunu kapatıp dokunmatik moduna geç
+
             dpadModu = false;
             if (dpad != null) dpad.pasifYap();
             if (dokunmatik != null) dokunmatik.aktifYap();
@@ -2351,8 +2347,8 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
     }
 
     public void onResume() {
-        // PiP'ten dönüşte onPictureInPictureModeChanged zaten attach'ı hallediyor,
-        // burada tekrar çağırmak "already attached" crash'ına yol açar.
+
+
         boolean inPiP = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N
                 && activity.isInPictureInPictureMode();
         if (!inPiP && mediaPlayer != null && videoLayout != null
@@ -2529,7 +2525,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         final String diziAdi = kanal.getName() != null ? kanal.getName() : "";
         sonDiziUrl = url;
 
-        // Bar için görünen metni oluştur
+
         String barMetni;
         try {
             com.example.livetvapp.database.DiziParser.DiziBilgisi bilgi =
@@ -2556,7 +2552,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
             }
             final IzlemePozisyonu sonKayit = kayit;
             mainHandler.post(() -> {
-                // Bar'ı burada güncelle
+
                 if (oynaticiBar != null) oynaticiBar.setIcerikAdi(finalBarMetni);
 
                 if (sonKayit != null && sonKayit.pozisyonMs > 30_000) {
@@ -2639,7 +2635,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
             mediaPlayer.setMedia(currentMedia);
             aktifStreamUrl = kanal.getUrl();
             mediaPlayer.play();
-// Aspect ratio ayarını yeniden uygula
+
             if (aspectRatioManager != null) {
                 aspectRatioManager.refreshAspectRatio();
             }
@@ -2712,7 +2708,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
                         yuklemeOverlayGizle();
                         streamHataBildirimiGizle();
                         if (streamMonitor != null) streamMonitor.onStreamPlaying();
-                        // Aspect ratio ayarını video başladıktan sonra yeniden uygula
+
                         if (aspectRatioManager != null) {
                             aspectRatioManager.refreshAspectRatio();
                         }
@@ -2723,7 +2719,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
                         streamTimeoutIptal();
                         yuklemeOverlayGizle();
                         if (streamMonitor != null) streamMonitor.onStreamError();
-                        // İstersen burada hata mesajı gösterme, StreamMonitor yönetsin
+
                     });
                     break;
                 case MediaPlayer.Event.EndReached:
@@ -3036,10 +3032,10 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
         }
     }
 
-    // ---------------------------------------------------------------
-    // Kısayol kutusunun görünürlüğünü merkezi olarak yöneten metot
-    // ---------------------------------------------------------------
-// Anakontrol.java - sınıf içinde herhangi bir yere ekleyin
+
+
+
+
     private void kutuKonumunuGuncelle() {
         if (kisayolKutusu == null) return;
 
@@ -3108,7 +3104,7 @@ public class Anakontrol implements StreamMonitor.StreamMonitorListener {
 
         kisayolKutusu.setVisibility(gorunmeli ? View.VISIBLE : View.GONE);
 
-        // Konumu güncelle (sadece görünürken değil, her çağrıldığında)1111
+
         kutuKonumunuGuncelle();
     }
 }

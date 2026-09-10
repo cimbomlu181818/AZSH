@@ -36,17 +36,17 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
     private static final String EXTRA_MULTI_FILE_MODE = "multi_file_mode";
     private static final String EXTRA_FILE_PATHS      = "file_paths";
 
-    // UI
+    
     private TextView    tvHedefCihaz, tvToplamBoyut, tvSpeed, tvStatus, tvRemaining;
     private ProgressBar pbToplam;
     private Button      btnCancel;
     private RecyclerView rvDosyalar;
 
-    // Adapter
+    
     private TransferAdapter adapter;
     private List<TransferItem> transferItems = new ArrayList<>();
 
-    // Transfer
+    
     private FileTransferClient transferClient;
     private String targetIp;
     private String targetName;
@@ -58,7 +58,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
     private long totalBytesSent     = 0;
     private int successCount = 0;
     private int errorCount   = 0;
-    // Tek dosya modu
+    
     private File fileToSend;
 
     private long startTime;
@@ -66,7 +66,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
     private Handler handler = new Handler(Looper.getMainLooper());
     private long lastBytesTransferred = 0;
 
-    // ─────────────────────────────────────────────────────────────────────────
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +129,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         updateToplamUI();
     }
 
-    // ─── Transfer Başlatma ───────────────────────────────────────────────────
+    
 
     private void startNextFile() {
         if (!isMultiFileMode) {
@@ -177,7 +177,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         transferClient.sendFile(targetIp, fileToSend);
     }
 
-    // ─── Callbacks ───────────────────────────────────────────────────────────
+    
 
     @Override
     public void onTransferStarted(String fileName, long fileSize) {
@@ -189,12 +189,12 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         runOnUiThread(() -> {
             int idx = isMultiFileMode ? currentFileIndex : 0;
 
-            // Aktif dosyanın progress'ini güncelle
+            
             TransferItem item = transferItems.get(idx);
             item.setProgress(percent);
             adapter.notifyItemChanged(idx);
 
-            // Hız hesapla
+            
             lastBytesTransferred = (currentFileSize * percent) / 100;
             long now      = System.currentTimeMillis();
             long timeDelta = (now - startTime) / 1000;
@@ -210,7 +210,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
                 }
             }
 
-            // Toplam progress güncelle
+            
             long sentSoFar = totalBytesSent + lastBytesTransferred;
             int  totalPct  = (int) (sentSoFar * 100 / totalFileSize);
             pbToplam.setProgress(totalPct);
@@ -223,7 +223,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         runOnUiThread(() -> {
             int idx = isMultiFileMode ? currentFileIndex : 0;
 
-            // Tamamlanan dosyayı işaretle
+            
             TransferItem item = transferItems.get(idx);
             item.setProgress(100);
             item.setDurum(TransferItem.DURUM_TAMAM);
@@ -234,7 +234,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
             if (isMultiFileMode) {
                 currentFileIndex++;
                 if (currentFileIndex < filesToSend.size()) {
-                    // Sıradaki dosyaya geç
+                    
                     tvStatus.setText("Hazırlanıyor...");
                     tvSpeed.setText("0 B/s");
                     tvRemaining.setText("Hesaplanıyor...");
@@ -260,7 +260,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
             errorCount++;
 
             if (isMultiFileMode) {
-                // Hatalı dosyayı atla, totalBytesSent DEĞİŞMEZ (dosya gitmedi)
+                
                 currentFileIndex++;
                 if (currentFileIndex < filesToSend.size()) {
                     tvStatus.setText("Hata oluştu, sonraki dosyaya geçiliyor...");
@@ -268,11 +268,11 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
                     tvRemaining.setText("Hesaplanıyor...");
                     new Handler().postDelayed(this::startNextFile, 1500);
                 } else {
-                    // Tüm dosyalar denendi (bazıları hatalı)
+                    
                     showTransferSummary();
                 }
             } else {
-                // Tek dosya modunda hata olursa direkt hata ekranı göster
+                
                 btnCancel.setText("Kapat");
                 btnCancel.setOnClickListener(v -> finish());
                 tvStatus.setText("❌ Hata: " + error);
@@ -320,7 +320,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         pbToplam.setProgress(0);
     }
 
-    // ─── Formatter ───────────────────────────────────────────────────────────
+    
 
     private String formatFileSize(long size) {
         if (size <= 0) return "0 B";
@@ -341,7 +341,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         return String.format(Locale.getDefault(), "%d sn", s);
     }
 
-    // ─── Lifecycle ───────────────────────────────────────────────────────────
+    
 
     @Override
     protected void onDestroy() {
@@ -350,7 +350,7 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         if (transferClient != null) transferClient.cancel();
     }
 
-    // ─── Başlatma yardımcısı (tek dosya) ────────────────────────────────────
+    
 
     public static void start(Context context, String targetIp, String targetName, String filePath) {
         Intent intent = new Intent(context, FileTransferActivity.class);
@@ -361,9 +361,9 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         context.startActivity(intent);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    // ─── MODEL ──────────────────────────────────────────────────────────────
-    // ════════════════════════════════════════════════════════════════════════
+    
+    
+    
 
     public static class TransferItem {
         public static final int DURUM_BEKLIYOR = 0;
@@ -390,9 +390,9 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
         public void setDurum(int d)    { this.durum    = d; }
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    // ─── ADAPTER ────────────────────────────────════════════════════════════
-    // ════════════════════════════════════════════════════════════════════════
+    
+    
+    
 
     public static class TransferAdapter extends RecyclerView.Adapter<TransferAdapter.VH> {
 
@@ -417,10 +417,10 @@ public class FileTransferActivity extends AppCompatActivity implements FileTrans
             h.tvDosyaAd.setText(item.getDosyaAd());
             h.pbDosya.setProgress(item.getProgress());
 
-            // Dosya ikonu
+            
             h.ivDosyaIkon.setImageResource(ikonSec(item.getDosyaAd()));
 
-            // Durum etiketi + renk
+            
             switch (item.getDurum()) {
                 case TransferItem.DURUM_BEKLIYOR:
                     h.tvDosyaDurum.setText("Bekliyor");

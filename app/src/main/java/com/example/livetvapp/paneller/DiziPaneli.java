@@ -94,10 +94,10 @@ public class DiziPaneli {
         );
         recyclerView.setAdapter(adapter);
         adapter.setOnDiziDetayIstekListener((dizi, pozisyon) -> {
-            // Hangi kanaldan series URL'sini bulalım
-            // tumDiziler içinde bu dizi var, ilk kanalını bulmak için
-            // channelRepository'den sorgulayacağız
-            goster(); // panel zaten açık, loading göster
+            
+            
+            
+            goster(); 
             if (yukleniyorText != null) {
                 yukleniyorText.setText("Sezon bilgisi yükleniyor...");
                 yukleniyorText.setVisibility(View.VISIBLE);
@@ -122,7 +122,7 @@ public class DiziPaneli {
                                     dizi.setSezonlar(sezonlar);
                                     if (yukleniyorText != null)
                                         yukleniyorText.setVisibility(View.GONE);
-                                    // Şimdi toggle yap
+                                    
                                     adapter.sezonlarYuklendi(dizi, pozisyon);
                                 }
                                 @Override
@@ -391,11 +391,11 @@ public class DiziPaneli {
             return;
         }
 
-        // Önce cache'e bak
+        
         String CACHE_KEY_FAVORITES = "FAVORITES_SERIES";
         List<Dizi> cachedFavoriler = DiziCache.getInstance().get(CACHE_KEY_FAVORITES);
         if (cachedFavoriler != null) {
-            // Cache'deki dizileri favori listesine göre filtrele
+            
             List<Dizi> filtrelenmisFavoriler = new ArrayList<>();
             for (String favoriAd : favoriDiziAdlari) {
                 for (Dizi dizi : cachedFavoriler) {
@@ -414,7 +414,7 @@ public class DiziPaneli {
             return;
         }
 
-        // Cache yoksa tüm SERIES kanallarını DB'den çek
+        
         guncelleBosGorunum(null, true);
         goster();
 
@@ -424,12 +424,12 @@ public class DiziPaneli {
                     public void onChannelsLoaded(List<Channel> channels, boolean fromCache) {
                         new Thread(() -> {
                             try {
-                                // Gizli kanalları filtrele
+                                
                                 List<Channel> filtrelenmisKanallar = gizliKanallariFiltreele(channels, null, null);
-                                // Kanalları Dizi nesnelerine dönüştür
+                                
                                 List<Dizi> tumDizilerParsed = DiziParser.parseM3UForDiziler(filtrelenmisKanallar);
 
-                                // Sadece favori olanları filtrele
+                                
                                 List<Dizi> favoriDiziler = new ArrayList<>();
                                 for (String favoriAd : favoriDiziAdlari) {
                                     for (Dizi dizi : tumDizilerParsed) {
@@ -440,7 +440,7 @@ public class DiziPaneli {
                                     }
                                 }
 
-                                // Cache'e kaydet
+                                
                                 DiziCache.getInstance().put(CACHE_KEY_FAVORITES, tumDizilerParsed);
 
                                 mainHandler.post(() -> {

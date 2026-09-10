@@ -235,8 +235,8 @@ public class metadataPanel {
         bosKapsayici.addView(bosAyirici, bosAyiriciParams);
         bosKapsayici.addView(bosKaynak);
         icerik.addView(bosKapsayici, bosKapParams);
-        // Metadata paneli artık tam ekran değil, sadece içeriğin sığacağı kadar genişlikte
-// Metadata paneli - sağ tarafta, genişliği 350dp
+        
+
         int genislikDp = 450;
         int genislikPx = dp(genislikDp);
         FrameLayout.LayoutParams metaParams = new FrameLayout.LayoutParams(
@@ -395,7 +395,7 @@ public class metadataPanel {
         if (rootView == null) return;
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) rootView.getLayoutParams();
         if (params == null) return;
-        // marginPx artık sağ margin (çünkü panel sağda)
+        
         params.rightMargin = marginPx;
         rootView.setLayoutParams(params);
     }

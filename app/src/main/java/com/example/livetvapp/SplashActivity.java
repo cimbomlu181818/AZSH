@@ -43,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Tam ekran
+        
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowInsetsControllerCompat ctrl =
                 new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
@@ -62,21 +62,21 @@ public class SplashActivity extends AppCompatActivity {
         View sweepView    = findViewById(R.id.sweepView);
         TextView tvName   = findViewById(R.id.tvAppName);
 
-        // ── Dış halka dönsün (DÜZELTİLDİ)
+        
         ObjectAnimator outerAnim = ObjectAnimator.ofFloat(outerRing, "rotation", 0f, 360f);
         outerAnim.setDuration(3000);
         outerAnim.setRepeatCount(ValueAnimator.INFINITE);
         outerAnim.setInterpolator(new LinearInterpolator());
         outerAnim.start();
 
-        // ── İç halka ters dönsün (DÜZELTİLDİ)
+        
         ObjectAnimator innerAnim = ObjectAnimator.ofFloat(innerRing, "rotation", 0f, -360f);
         innerAnim.setDuration(5000);
         innerAnim.setRepeatCount(ValueAnimator.INFINITE);
         innerAnim.setInterpolator(new LinearInterpolator());
         innerAnim.start();
 
-        // ── Logo nefes alıyor
+        
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(logoBox, "scaleX", 0.96f, 1.04f);
         ObjectAnimator scaleY = ObjectAnimator.ofFloat(logoBox, "scaleY", 0.96f, 1.04f);
         scaleX.setDuration(2800);
@@ -89,7 +89,7 @@ public class SplashActivity extends AppCompatActivity {
         scaleY.setRepeatMode(ValueAnimator.REVERSE);
         scaleY.start();
 
-        // ── Sweep efekti
+        
         ObjectAnimator sweep = ObjectAnimator.ofFloat(sweepView, "translationX",
                 -dpToPx(60), dpToPx(120));
         sweep.setDuration(2500);
@@ -97,20 +97,20 @@ public class SplashActivity extends AppCompatActivity {
         sweep.setInterpolator(new LinearInterpolator());
         sweep.start();
 
-        // ── Uygulama adı fade-in
+        
         tvName.animate().alpha(1f).translationY(0f).setStartDelay(500).setDuration(700).start();
         tvName.setTranslationY(dpToPx(12));
 
-        // ── Durum mesajı ve progress fade-in
+        
         handler.postDelayed(() -> {
             tvStatus.animate().alpha(1f).setDuration(500).start();
             progressContainer.animate().alpha(1f).setDuration(500).start();
         }, 1200);
 
-        // ── Durum mesajı döngüsü
+        
         handler.postDelayed(statusDongusu, 2200);
 
-        // ── İlerleme animasyonu (92% kadar 15 saniyede)
+        
         ValueAnimator progressAnim = ValueAnimator.ofInt(0, (int)(dpToPx(160) * 0.92f));
         progressAnim.setDuration(TIMEOUT_MS);
         progressAnim.setInterpolator(new LinearInterpolator());
@@ -122,12 +122,12 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
         progressAnim.start();
-        // ── API kontrol
+        
         SharedPreferences tercihler = getSharedPreferences("azsh_giris", Context.MODE_PRIVATE);
         String kayitliEmail = tercihler.getString("email", null);
 
         if (kayitliEmail == null) {
-            // Kullanıcı hiç giriş yapmamış → login'e git
+            
             handler.postDelayed(() -> gitLogin(null), 1500);
             return;
         }
@@ -160,7 +160,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        // ── 15 saniye timeout
+        
         handler.postDelayed(() -> {
             if (!resolved) gitLogin(null);
         }, TIMEOUT_MS);

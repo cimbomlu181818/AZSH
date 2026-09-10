@@ -29,10 +29,10 @@ public class RemoteCommandServer {
     private DatagramSocket discoverySocket;
     private ServerSocket serverSocket;
     private boolean isRunning = false;
-    // Altına ekle:
+    
     private int activeClientCount = 0;
 
-    // Getter ekle (sınıfın herhangi bir yerine):
+    
     public boolean hasActiveClient() {
         return activeClientCount > 0;
     }

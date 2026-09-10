@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class YedekYonetici {
-    private static final int VERSIYON = 3; // Artırıldı: yeni alanlar eklendi
+    private static final int VERSIYON = 3; 
     private final Context         context;
     private final ExecutorService executor    = Executors.newSingleThreadExecutor();
     private final Handler         mainHandler = new Handler(Looper.getMainLooper());
@@ -52,7 +52,7 @@ public class YedekYonetici {
                 yedek.put("tarih", new SimpleDateFormat(
                         "yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
 
-                // --- M3U listesi (eklenme tarihi dahil) ---
+                
                 M3UManager m3uManager = new M3UManager(context);
                 List<M3UItem> m3uListesi = m3uManager.getAllM3UItems();
                 JSONArray m3uArray = new JSONArray();
@@ -68,7 +68,7 @@ public class YedekYonetici {
                 }
                 yedek.put("m3uListesi", m3uArray);
 
-                // --- Kanallar ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ Kanallar yazılıyor..."));
                 AppDatabase db = AppDatabase.getInstance(context);
                 JSONArray kanalArray = new JSONArray();
@@ -88,7 +88,7 @@ public class YedekYonetici {
                 }
                 yedek.put("kanallar", kanalArray);
 
-                // --- Gizli kanallar (URL bazlı) ---
+                
                 SharedPreferences gizliPrefs =
                         context.getSharedPreferences("gizli_kanallar", Context.MODE_PRIVATE);
                 JSONArray gizliKanalArray = new JSONArray();
@@ -97,7 +97,7 @@ public class YedekYonetici {
                 }
                 yedek.put("gizliKanallar", gizliKanalArray);
 
-                // --- Gizli kategoriler (M3U|Kategori) ---
+                
                 SharedPreferences gizliKatPrefs =
                         context.getSharedPreferences("gizli_kategoriler", Context.MODE_PRIVATE);
                 JSONArray gizliKatArray = new JSONArray();
@@ -106,7 +106,7 @@ public class YedekYonetici {
                 }
                 yedek.put("gizliKategoriler", gizliKatArray);
 
-                // --- YENİ: M3U bazlı gizleme (gizli_m3ular) ---
+                
                 SharedPreferences gizliM3UPrefs =
                         context.getSharedPreferences("gizli_m3ular", Context.MODE_PRIVATE);
                 JSONArray gizliM3UArray = new JSONArray();
@@ -115,7 +115,7 @@ public class YedekYonetici {
                 }
                 yedek.put("gizliM3Ular", gizliM3UArray);
 
-                // --- Kategori sıralama ---
+                
                 SharedPreferences siralamaPrefs =
                         context.getSharedPreferences("kategori_siralama", Context.MODE_PRIVATE);
                 JSONObject siralamaObj = new JSONObject();
@@ -124,7 +124,7 @@ public class YedekYonetici {
                 }
                 yedek.put("kategoriSiralama", siralamaObj);
 
-                // --- Favoriler ---
+                
                 SharedPreferences favoriPrefs =
                         context.getSharedPreferences("favoriler", Context.MODE_PRIVATE);
                 JSONObject favoriObj = new JSONObject();
@@ -133,7 +133,7 @@ public class YedekYonetici {
                 }
                 yedek.put("favoriler", favoriObj);
 
-                // --- AppSettings (show_shortcut_box ve diğer genel ayarlar) ---
+                
                 SharedPreferences appPrefs =
                         context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
                 JSONObject appSettingsObj = new JSONObject();
@@ -148,7 +148,7 @@ public class YedekYonetici {
                 }
                 yedek.put("appSettings", appSettingsObj);
 
-                // --- YENİ: Geri/ileri sarma süreleri (LiveTVAppPrefs) ---
+                
                 SharedPreferences stepPrefs =
                         context.getSharedPreferences("LiveTVAppPrefs", Context.MODE_PRIVATE);
                 JSONObject stepObj = new JSONObject();
@@ -156,13 +156,13 @@ public class YedekYonetici {
                 stepObj.put("forwardStep", stepPrefs.getInt("forwardStep", 10));
                 yedek.put("stepPrefs", stepObj);
 
-                // --- Xtream hesapları ---
+                
                 SharedPreferences xtreamPrefs =
                         context.getSharedPreferences("XtreamAccounts", Context.MODE_PRIVATE);
                 String xtreamJson = xtreamPrefs.getString("accounts_json", "[]");
                 yedek.put("xtreamHesaplari", new JSONArray(xtreamJson));
 
-                // --- YENİ: İzleme pozisyonları (kaldığı yer) ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ İzleme pozisyonları yazılıyor..."));
                 List<IzlemePozisyonu> pozisyonlar = db.channelDao().getAllPlaybackPositions();
                 JSONArray pozisyonArray = new JSONArray();
@@ -175,7 +175,7 @@ public class YedekYonetici {
                 }
                 yedek.put("izlemePozisyonlari", pozisyonArray);
 
-                // --- YENİ: Stalker portal bilgileri ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ Stalker portalları yazılıyor..."));
                 List<StalkerPortal> stalkerPortals = db.stalkerPortalDao().getActivePortals();
                 JSONArray stalkerPortalArray = new JSONArray();
@@ -193,7 +193,7 @@ public class YedekYonetici {
                 }
                 yedek.put("stalkerPortallar", stalkerPortalArray);
 
-                // --- YENİ: Stalker kategori ilerleme (sayfalama) ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ Stalker kategori ilerleme yazılıyor..."));
                 List<StalkerCategoryProgress> stalkerProgress = db.stalkerCategoryProgressDao().getAll();
                 JSONArray progressArray = new JSONArray();
@@ -210,7 +210,7 @@ public class YedekYonetici {
                 }
                 yedek.put("stalkerKategoriProgress", progressArray);
 
-                // --- Dosyaya yaz ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ Dosya yazılıyor..."));
                 String dosyaAdi = "AZSH_yedek_"
                         + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date())
@@ -261,7 +261,7 @@ public class YedekYonetici {
                 AppDatabase db = AppDatabase.getInstance(context);
                 mainHandler.post(() -> callback.onIlerleme("⏳ Mevcut veriler temizleniyor..."));
 
-                // Temizlik
+                
                 db.channelDao().deleteAll();
                 db.m3uDao().deleteAll();
                 db.channelDao().deleteAllPlaybackPositions();
@@ -271,7 +271,7 @@ public class YedekYonetici {
                 M3UManager m3uManager = new M3UManager(context);
                 m3uManager.clearAll();
 
-                // SharedPreferences temizliği (tüm ilgili pref'ler)
+                
                 context.getSharedPreferences("gizli_kanallar",    Context.MODE_PRIVATE).edit().clear().apply();
                 context.getSharedPreferences("gizli_kategoriler", Context.MODE_PRIVATE).edit().clear().apply();
                 context.getSharedPreferences("gizli_m3ular",      Context.MODE_PRIVATE).edit().clear().apply();
@@ -281,7 +281,7 @@ public class YedekYonetici {
                 context.getSharedPreferences("LiveTVAppPrefs",    Context.MODE_PRIVATE).edit().clear().apply();
                 context.getSharedPreferences("XtreamAccounts",    Context.MODE_PRIVATE).edit().clear().apply();
 
-                // --- M3U listesi (eklenme tarihi ile) ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ M3U listesi yükleniyor..."));
                 JSONArray m3uArray = yedek.getJSONArray("m3uListesi");
                 List<M3UItem> m3uListesi = new ArrayList<>();
@@ -300,7 +300,7 @@ public class YedekYonetici {
                 db.m3uDao().insertAll(m3uListesi);
                 for (M3UItem m3u : m3uListesi) m3uManager.addM3U(m3u);
 
-                // --- Kanallar ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ Kanallar yükleniyor..."));
                 JSONArray kanalArray = yedek.getJSONArray("kanallar");
                 List<Channel> toplu = new ArrayList<>();
@@ -323,7 +323,7 @@ public class YedekYonetici {
                 }
                 if (!toplu.isEmpty()) db.channelDao().insertAll(toplu);
 
-                // --- Gizli kanallar ---
+                
                 JSONArray gizliKanalArray = yedek.optJSONArray("gizliKanallar");
                 if (gizliKanalArray != null && gizliKanalArray.length() > 0) {
                     SharedPreferences.Editor ed =
@@ -334,7 +334,7 @@ public class YedekYonetici {
                     ed.apply();
                 }
 
-                // --- Gizli kategoriler ---
+                
                 JSONArray gizliKatArray = yedek.optJSONArray("gizliKategoriler");
                 if (gizliKatArray != null && gizliKatArray.length() > 0) {
                     SharedPreferences.Editor ed =
@@ -345,7 +345,7 @@ public class YedekYonetici {
                     ed.apply();
                 }
 
-                // --- YENİ: M3U bazlı gizleme ---
+                
                 JSONArray gizliM3UArray = yedek.optJSONArray("gizliM3Ular");
                 if (gizliM3UArray != null && gizliM3UArray.length() > 0) {
                     SharedPreferences.Editor ed =
@@ -356,7 +356,7 @@ public class YedekYonetici {
                     ed.apply();
                 }
 
-                // --- Kategori sıralama ---
+                
                 JSONObject siralamaObj = yedek.optJSONObject("kategoriSiralama");
                 if (siralamaObj != null) {
                     SharedPreferences.Editor ed =
@@ -369,7 +369,7 @@ public class YedekYonetici {
                     ed.apply();
                 }
 
-                // --- Favoriler ---
+                
                 JSONObject favoriObj = yedek.optJSONObject("favoriler");
                 if (favoriObj != null && favoriObj.length() > 0) {
                     SharedPreferences.Editor ed =
@@ -382,7 +382,7 @@ public class YedekYonetici {
                     ed.apply();
                 }
 
-                // --- AppSettings (tüm anahtarlar) ---
+                
                 JSONObject appSettingsObj = yedek.optJSONObject("appSettings");
                 if (appSettingsObj != null) {
                     SharedPreferences.Editor ed =
@@ -400,7 +400,7 @@ public class YedekYonetici {
                     ed.apply();
                 }
 
-                // --- YENİ: Geri/ileri sarma süreleri ---
+                
                 JSONObject stepObj = yedek.optJSONObject("stepPrefs");
                 if (stepObj != null) {
                     SharedPreferences.Editor ed =
@@ -410,14 +410,14 @@ public class YedekYonetici {
                     ed.apply();
                 }
 
-                // --- Xtream hesapları ---
+                
                 JSONArray xtreamArray = yedek.optJSONArray("xtreamHesaplari");
                 if (xtreamArray != null && xtreamArray.length() > 0) {
                     context.getSharedPreferences("XtreamAccounts", Context.MODE_PRIVATE)
                             .edit().putString("accounts_json", xtreamArray.toString()).apply();
                 }
 
-                // --- YENİ: İzleme pozisyonları ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ İzleme pozisyonları yükleniyor..."));
                 JSONArray pozisyonArray = yedek.optJSONArray("izlemePozisyonlari");
                 if (pozisyonArray != null) {
@@ -432,18 +432,18 @@ public class YedekYonetici {
                     }
                 }
 
-                // --- YENİ: Stalker portal bilgileri ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ Stalker portalları yükleniyor..."));
                 JSONArray stalkerPortalArray = yedek.optJSONArray("stalkerPortallar");
                 if (stalkerPortalArray != null) {
                     for (int i = 0; i < stalkerPortalArray.length(); i++) {
                         JSONObject pObj = stalkerPortalArray.getJSONObject(i);
                         StalkerPortal portal = new StalkerPortal();
-                        portal.setId(0);  // ID sıfırla → Room yeni ID atar
+                        portal.setId(0);  
                         portal.setName(pObj.getString("name"));
                         portal.setPortalUrl(pObj.getString("portalUrl"));
                         portal.setMacAddress(pObj.getString("macAddress"));
-                        portal.setToken(null);       // Token süresi dolmuş olur, sıfırla
+                        portal.setToken(null);       
                         portal.setTokenExpiry(0);
                         portal.setActive(pObj.optBoolean("isActive", true));
                         portal.setLastSync(pObj.optLong("lastSync", 0));
@@ -451,7 +451,7 @@ public class YedekYonetici {
                     }
                 }
 
-                // --- YENİ: Stalker kategori ilerleme ---
+                
                 mainHandler.post(() -> callback.onIlerleme("⏳ Stalker kategori ilerleme yükleniyor..."));
                 JSONArray progressArray = yedek.optJSONArray("stalkerKategoriProgress");
                 if (progressArray != null) {

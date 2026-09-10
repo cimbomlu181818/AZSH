@@ -89,8 +89,8 @@ public class Dpad {
         ICERIK_KATEGORI_DIZI,
         AYARLAR,
         ARAMA,
-        AYARLAR_GIZLE,      // YENİ
-        AYARLAR_SIRALAMA    // YENİ
+        AYARLAR_GIZLE,      
+        AYARLAR_SIRALAMA    
     }
 
     private AktifPanel aktifPanel = AktifPanel.HICBIRI;
@@ -157,15 +157,15 @@ public class Dpad {
                 aciklamalar.addAll(Arrays.asList("İçerikte yukarı", "İçerikte aşağı", "—", "Kategoriye geçiş", "İçerik seç", "Kategoriye geç"));
                 break;
             case AYARLAR:
-                // Ayarlar paneli alt menü kontrolü
+                
                 AyarlarPaneli.MenuSeviyesi altMenu = ayarlarPaneli.getMevcutMenu();
                 boolean anaMenuMu = (altMenu == AyarlarPaneli.MenuSeviyesi.ANA_MENU);
 
                 if (anaMenuMu) {
-                    // ANA MENU
+                    
                     aciklamalar.addAll(Arrays.asList("Menüde yukarı", "Menüde aşağı", "------", "-------", "Seçeneği seç", "Ayarlardan çık"));
                 } else {
-                    // Alt menüler (M3U_YONETIMI, M3U_YUKLE, M3U_SILME, XTREAM_MENU, YEDEKLEME, M3U_DURUM_PANELI)
+                    
                     aciklamalar.addAll(Arrays.asList("Menüde yukarı", "Menüde aşağı", "------", "-------", "Seçeneği seç", "Üst menü"));
                 }
                 break;
@@ -282,7 +282,7 @@ public class Dpad {
     }
 
     private boolean handleBarTuslari(int keyCode, KeyEvent event) {
-        // Buton listesini her seferinde tazele
+        
         List<Button> barButtons = new ArrayList<>();
         int[] ids = {R.id.btnKanallar, R.id.btnRewindStep, R.id.btnRewind, R.id.btnPlayPause, R.id.btnForward, R.id.btnForwardStep,
                 R.id.btnFavori, R.id.btnMute, R.id.btnSettings, R.id.btnSearch, R.id.btnPiP, R.id.btnFullscreen, R.id.btnCloseBar};
@@ -299,7 +299,7 @@ public class Dpad {
         View focused = activity.getCurrentFocus();
         int idx = barButtons.indexOf(focused);
 
-        // Eğer focus bar butonu değilse veya null ise, ilk butona odaklan
+        
         if (idx == -1) {
             barButtons.get(0).requestFocus();
             return true;
@@ -359,13 +359,13 @@ public class Dpad {
         if (focused != null) {
             int pos = rv.getChildAdapterPosition(focused);
             if (pos > 0) {
-                // Bir önceki öğeye focus ver
+                
                 View prevChild = rv.getLayoutManager().findViewByPosition(pos - 1);
                 if (prevChild != null) {
                     prevChild.requestFocus();
                     return true;
                 } else {
-                    // Görünmüyorsa scroll et
+                    
                     rv.smoothScrollToPosition(pos - 1);
                     rv.post(() -> {
                         View scrolledChild = rv.getLayoutManager().findViewByPosition(pos - 1);
@@ -376,7 +376,7 @@ public class Dpad {
             }
         }
 
-        // En üstte veya focus yoksa
+        
         if (isEnUstOge(rv)) {
             System.out.println("⬆️ En üst öğe — focus burada kalıyor");
             return true;
@@ -398,7 +398,7 @@ public class Dpad {
         RecyclerView rv = getAktifRecyclerView();
         if (rv == null) return false;
 
-        // Lazy loading kontrolü (SADECE_KANAL için)
+        
         if (aktifPanel == AktifPanel.SADECE_KANAL) {
             View focused = rv.getFocusedChild();
             if (focused != null) {
@@ -416,7 +416,7 @@ public class Dpad {
             int pos = rv.getChildAdapterPosition(focused);
             int itemCount = rv.getAdapter() != null ? rv.getAdapter().getItemCount() : 0;
             if (pos < itemCount - 1) {
-                // Bir sonraki öğeye focus ver
+                
                 View nextChild = rv.getLayoutManager().findViewByPosition(pos + 1);
                 if (nextChild != null) {
                     nextChild.requestFocus();
@@ -432,7 +432,7 @@ public class Dpad {
             }
         }
 
-        // En altta veya focus yoksa
+        
         if (isEnAltOge(rv)) {
             System.out.println("⬇️ En alt öğe — focus burada kalıyor");
             return true;
@@ -574,16 +574,16 @@ public class Dpad {
 
     private boolean handleEnter() {
         if (aktifPanel == AktifPanel.HICBIRI) {
-            // Bar açıksa kapat
+            
             if (oynaticiBar != null && oynaticiBar.isVisible()) {
                 oynaticiBar.gizle();
             }
             if (anakontrol != null) {
-                // Video duruyorsa (paused) devam ettir
+                
                 if (anakontrol.isVideoPaused()) {
                     anakontrol.resumeVideo();
                 }
-                // Video oynuyorsa veya hiç yoksa -> sadece paneli aç, stream'i yeniden başlatma!
+                
                 else {
                     if (Icerikpaneli.TIP_DIZI.equals(aktifIcerikTipi)) {
                         diziPaneli.setMarginStart(0);
@@ -594,13 +594,13 @@ public class Dpad {
                         if (diziPaneli.getAdapter() != null)
                             diziPaneli.getAdapter().setPanelAcik(true);
                         guncelleKisayol();
-                        focusDiziPanelineVer(false);  // ← false gönder, metadata tetiklenmesin
+                        focusDiziPanelineVer(false);  
                     } else {
-                    anakontrol.panelAcilirkenAktifOgeYukle();  // Aktif kanalın kategorisini tazeleyip paneli aç
+                    anakontrol.panelAcilirkenAktifOgeYukle();  
                 }
                 }
             } else {
-                // anakontrol yoksa eski davranış (nadiren)
+                
                 if (Icerikpaneli.TIP_DIZI.equals(aktifIcerikTipi)) {
                     diziPaneli.setMarginStart(0);
                     View v = diziPaneli.getPanelView();
@@ -616,7 +616,7 @@ public class Dpad {
             }
             return true;
         }
-        // Panel açıkken center tuşu -> focus'taki butona tıkla
+        
         View focusedView = activity.getCurrentFocus();
         System.out.println("🔘 handleEnter | focusedView=" + (focusedView != null ? focusedView.getClass().getSimpleName() : "null"));
         if (focusedView instanceof Button) {
@@ -967,7 +967,7 @@ public class Dpad {
             return false;
         }
         if (menu == AyarlarPaneli.MenuSeviyesi.GIZLE_PANELI) {
-            // aktifPanel'i AYARLAR_GIZLE yap
+            
             if (aktifPanel != AktifPanel.AYARLAR_GIZLE) {
                 aktifPanel = AktifPanel.AYARLAR_GIZLE;
                 guncelleKisayol();
@@ -1004,7 +1004,7 @@ public class Dpad {
                     if (!islendi) {
                         ayarlarPaneliKapat();
                     } else {
-                        // Geri tuşu ile GizlePaneli'nden çıkıldıysa aktifPanel'i AYARLAR yap
+                        
                         if (aktifPanel == AktifPanel.AYARLAR_GIZLE || aktifPanel == AktifPanel.AYARLAR_SIRALAMA) {
                             aktifPanel = AktifPanel.AYARLAR;
                             guncelleKisayol();
@@ -1015,7 +1015,7 @@ public class Dpad {
             return false;
         }
         if (menu == AyarlarPaneli.MenuSeviyesi.SIRALAMA_PANELI) {
-            // aktifPanel'i AYARLAR_SIRALAMA yap
+            
             if (aktifPanel != AktifPanel.AYARLAR_SIRALAMA) {
                 aktifPanel = AktifPanel.AYARLAR_SIRALAMA;
                 guncelleKisayol();
@@ -1047,7 +1047,7 @@ public class Dpad {
                     if (!siraIslendi) {
                         ayarlarPaneliKapat();
                     } else {
-                        // Geri tuşu ile SiralamaPaneli'nden çıkıldıysa aktifPanel'i AYARLAR yap
+                        
                         if (aktifPanel == AktifPanel.AYARLAR_SIRALAMA) {
                             aktifPanel = AktifPanel.AYARLAR;
                             guncelleKisayol();

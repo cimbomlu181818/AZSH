@@ -16,28 +16,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Stalker portallarından isteğe bağlı (lazy) sayfa yüklemesi yapar.
- *
- * <p>Kullanımı: kullanıcı scroll yapıp DB'den boş sonuç geldiğinde,
- * {@link #fetchNextPageIfAvailable} çağrılır. Bu metot:
- * <ol>
- *   <li>{@link StalkerCategoryProgress} tablosundan ilgili kategoriyi bulur.</li>
- *   <li>Daha çekilmemiş sayfa varsa Stalker API'den bir sonraki sayfayı alır.</li>
- *   <li>Gelen kanalları {@code channels} tablosuna ekler ve ilerlemeyi günceller.</li>
- *   <li>Yeni kanalları callback ile döner.</li>
- * </ol>
- * Aynı kategoriye eş zamanlı çift istek yapılmasını önlemek için in-flight set kullanır.
- * </p>
- */
+
 public class StalkerPageFetcher {
 
     private static final String TAG = "StalkerPageFetcher";
 
-    /** Callback arayüzü */
+    
     public interface PageFetchCallback {
-        /** @param channels yeni yüklenen kanallar (boş olabilir)
-         *  @param isLastPage daha fazla sayfa kalmadıysa true */
+        
         void onResult(List<Channel> channels, boolean isLastPage);
     }
 
@@ -45,20 +31,14 @@ public class StalkerPageFetcher {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
-    /** Şu an yüklenmekte olan (sourceName + category) çiftleri */
+    
     private final Set<String> inFlight = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public StalkerPageFetcher(Context context) {
         this.context = context.getApplicationContext();
     }
 
-    /**
-     * Bir kategori için DB'de kalan sayfa yoksa Stalker API'den bir sonraki sayfayı çeker.
-     *
-     * @param contentType "MOVIE" veya "SERIES"
-     * @param categoryName kategori adı (DB'deki category sütunu)
-     * @param callback     sonuç callback'i (her zaman main thread'de çağrılır)
-     */
+    
     public void fetchNextPageIfAvailable(String contentType,
                                          String categoryName,
                                          PageFetchCallback callback) {
@@ -69,7 +49,7 @@ public class StalkerPageFetcher {
 
         String lockKey = contentType + "|" + categoryName;
         if (!inFlight.add(lockKey)) {
-            // Zaten yükleniyor, beklet
+            
             Log.d(TAG, "Zaten yükleniyor: " + lockKey);
             mainHandler.post(() -> callback.onResult(new ArrayList<>(), false));
             return;
@@ -92,7 +72,7 @@ public class StalkerPageFetcher {
         AppDatabase db = AppDatabase.getInstance(context);
         StalkerCategoryProgressDao progressDao = db.stalkerCategoryProgressDao();
 
-        // Bu kategoriye ait tüm Stalker portal ilerlemelerini bul
+        
         List<StalkerCategoryProgress> progressList = progressDao.getByCategory(categoryName);
         if (progressList == null || progressList.isEmpty()) {
             Log.d(TAG, "İlerleme kaydı yok: " + categoryName);
@@ -111,13 +91,13 @@ public class StalkerPageFetcher {
             if (lastFetched >= totalPages - 1) {
                 Log.d(TAG, "Tüm sayfalar alınmış: " + progress.getM3uName()
                         + "/" + categoryName + " (" + lastFetched + "/" + (totalPages - 1) + ")");
-                continue; // bu kaynak için daha sayfa yok
+                continue; 
             }
 
             anyMore = true;
             int nextPage = lastFetched + 1;
 
-            // Portali bul
+            
             String portalName = progress.getM3uName().startsWith("Stalker:")
                     ? progress.getM3uName().substring("Stalker:".length())
                     : progress.getM3uName();
@@ -132,7 +112,7 @@ public class StalkerPageFetcher {
                 continue;
             }
 
-            // Token al / yenile
+            
             String token = StalkerTokenCache.getInstance().getToken(portal.getId());
             if (token == null || token.isEmpty()) {
                 Log.d(TAG, "Token yok, handshake yapılıyor: " + portalName);
@@ -155,7 +135,7 @@ public class StalkerPageFetcher {
                 continue;
             }
 
-            // API'den sonraki sayfayı çek
+            
             String catId = progress.getCategoryId();
             if (catId == null || catId.isEmpty()) catId = "*";
 
@@ -184,14 +164,14 @@ public class StalkerPageFetcher {
             if (data == null || data.length() == 0) {
                 Log.d(TAG, "Sayfa boş döndü: " + portalName + "/" + categoryName
                         + " sayfa=" + nextPage);
-                // Yine de ilerlemeyi "tamamlandı" olarak işaretle
+                
                 progress.setLastFetchedPage(progress.getTotalPages() - 1);
                 progress.setLastSyncTime(System.currentTimeMillis());
                 progressDao.update(progress);
                 continue;
             }
 
-            // Kanalları parse et
+            
             String sourceName = progress.getM3uName();
             int insertedCount = 0;
             for (int i = 0; i < data.length(); i++) {
@@ -212,7 +192,7 @@ public class StalkerPageFetcher {
                 insertedCount++;
             }
 
-            // DB'ye kaydet
+            
             if (insertedCount > 0) {
                 try {
                     db.channelDao().insertAll(allNew.subList(allNew.size() - insertedCount, allNew.size()));
@@ -221,7 +201,7 @@ public class StalkerPageFetcher {
                 }
             }
 
-            // İlerlemeyi güncelle
+            
             progress.setLastFetchedPage(nextPage);
             if (maxPageItems > 0 && totalItems > 0) {
                 int recalcPages = (int) Math.ceil((double) totalItems / maxPageItems);
@@ -243,7 +223,7 @@ public class StalkerPageFetcher {
         mainHandler.post(() -> callback.onResult(result, lastPage));
     }
 
-    /** Temizleme — Activity kapanırken çağrılabilir. */
+    
     public void shutdown() {
         executor.shutdownNow();
     }

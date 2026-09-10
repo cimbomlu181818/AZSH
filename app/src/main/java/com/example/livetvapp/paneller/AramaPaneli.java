@@ -219,12 +219,12 @@ public class AramaPaneli {
     }
 
     public void goster() {
-        // Önce paneli görünür yap, state'i sıfırla
+        
         panelView.setVisibility(View.VISIBLE);
         etArama.setText("");
         temizleSonuclar();
-        sonucFokusModuAktif = false;       // ← EKLENDİ: mod sıfırla
-        panelYuksekliginiSifirla();        // ← EKLENDİ: yükseklik sıfırla
+        sonucFokusModuAktif = false;       
+        panelYuksekliginiSifirla();        
 
         boolean remoteKontrolBagliMi = remoteKontrolSupplier != null && remoteKontrolSupplier.isRemoteClientConnected();
 
@@ -233,7 +233,7 @@ public class AramaPaneli {
             etArama.post(() -> {
                 etArama.requestFocus();
                 if (!remoteKontrolBagliMi) {
-                    klavye.goster(etArama);   // Kumanda bağlıysa OzelKlavye açma
+                    klavye.goster(etArama);   
                 }
             });
         } else {
@@ -307,7 +307,7 @@ public class AramaPaneli {
                     adapterCanli.ekleSiraBilgisi(siraMap);
                     adapterCanli.appendItems(channels);
                     offsetCanli += channels.size();
-                    // Değişiklik 9
+                    
                     String okCanli = rvCanliTV.getVisibility() == View.VISIBLE ? " ▼" : " ▶";
                     tvCanliBaslik.setText("Canlı TV (" + offsetCanli + ")" + okCanli);
                 }
@@ -320,7 +320,7 @@ public class AramaPaneli {
                     adapterFilm.ekleSiraBilgisi(siraMap);
                     adapterFilm.appendItems(channels);
                     offsetFilm += channels.size();
-                    // Değişiklik 10
+                    
                     String okFilm = rvFilm.getVisibility() == View.VISIBLE ? " ▼" : " ▶";
                     tvFilmBaslik.setText("Film (" + offsetFilm + ")" + okFilm);
                 }
@@ -335,7 +335,7 @@ public class AramaPaneli {
                     adapterDizi.appendItems(tekilDiziler);
                 }
                 offsetDizi += channels.size();
-                // Değişiklik 11
+                
                 if (adapterDizi != null) {
                     String okDizi = rvDizi.getVisibility() == View.VISIBLE ? " ▼" : " ▶";
                     tvDiziBaslik.setText("Dizi (" + adapterDizi.getItemCount() + ")" + okDizi);
@@ -389,14 +389,14 @@ public class AramaPaneli {
 
     private void grupBaslat(LinearLayout grup, TextView baslik, RecyclerView rv,
                             String baslikMetin, String contentType) {
-        // Değişiklik 4: grup.setVisibility(View.VISIBLE); silindi
-        // Değişiklik 5: başlangıç metni (0) ile
+        
+        
         baslik.setText(baslikMetin + " (0) ▶");
         baslik.setFocusable(true);
         baslik.setClickable(true);
         rv.setVisibility(View.GONE);
 
-        // Değişiklik 6: setOnClickListener yeni versiyon
+        
         baslik.setOnClickListener(v -> {
             String t = baslik.getText().toString();
             if (rv.getVisibility() == View.VISIBLE) {
@@ -415,7 +415,7 @@ public class AramaPaneli {
                 etArama.requestFocus();
                 return true;
             }
-            // Değişiklik 7: DPAD_CENTER/ENTER bloğu yeni versiyon
+            
             if (keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER
                     || keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
                 String t = baslik.getText().toString();
@@ -466,7 +466,7 @@ public class AramaPaneli {
         }
     }
 
-    // Değişiklik 8: temizleSonuclar() tamamen yenilendi
+    
     private void temizleSonuclar() {
         if (tvCanliBaslik != null) tvCanliBaslik.setText("Canlı TV (0) ▶");
         if (tvFilmBaslik  != null) tvFilmBaslik.setText("Film (0) ▶");

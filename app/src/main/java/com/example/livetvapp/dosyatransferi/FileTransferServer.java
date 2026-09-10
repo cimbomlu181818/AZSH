@@ -94,7 +94,7 @@ public class FileTransferServer {
         try {
             InputStream inputStream = socket.getInputStream();
 
-            // 1. Dosya adını oku (Base64 encoded)
+            
             StringBuilder nameBuilder = new StringBuilder();
             int ch;
             while ((ch = inputStream.read()) != 0) {
@@ -103,7 +103,7 @@ public class FileTransferServer {
             }
             String encodedName = nameBuilder.toString();
 
-            // Base64 decode et (Türkçe karakterler için)
+            
             String fileName;
             try {
                 byte[] decodedBytes = android.util.Base64.decode(encodedName, android.util.Base64.DEFAULT);
@@ -114,7 +114,7 @@ public class FileTransferServer {
                 Log.w(TAG, "⚠️ Base64 decode hatası, ham ad kullanıldı: " + fileName);
             }
 
-            // 2. Dosya boyutunu oku (8 byte, long)
+            
             byte[] sizeBytes = new byte[8];
             int totalRead = 0;
             while (totalRead < 8) {
@@ -134,7 +134,7 @@ public class FileTransferServer {
 
             if (callback != null) callback.onTransferStarted(fileName, fileSize);
 
-            // Uzantı ayrıştır
+            
             String nameWithoutExt = fileName;
             String extension = "";
             int dotIndex = fileName.lastIndexOf('.');
@@ -143,13 +143,13 @@ public class FileTransferServer {
                 extension = fileName.substring(dotIndex);
             }
 
-            // 3. Kaydet
+            
             OutputStream outputStream;
             String finalPath;
-            File outputFile = null;  // Android 9 için kullanılacak
+            File outputFile = null;  
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // ─── Android 10+ : MediaStore ───────────────────────────────
+                
                 String uniqueName = fileName;
                 int counter = 1;
 
@@ -179,11 +179,11 @@ public class FileTransferServer {
                 outputStream = context.getContentResolver().openOutputStream(fileUri);
                 if (outputStream == null) throw new IOException("openOutputStream null döndü");
                 finalPath = fileUri.toString();
-                // ⚠️ outputStream.close() BURADA ÇAĞRILMAYACAK - Dosya yazıldıktan sonra kapatılacak
+                
                 Log.d(TAG, "📁 MediaStore URI: " + finalPath);
 
             } else {
-                // ─── Android 9 ve altı : Doğrudan dosya ─────────────────────
+                
                 File downloadDir = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOWNLOADS);
 
@@ -214,7 +214,7 @@ public class FileTransferServer {
                 Log.d(TAG, "📁 Kayıt yolu: " + finalPath);
             }
 
-            // 4. Dosyayı yaz
+            
             byte[] buffer = new byte[8192];
             long written = 0;
             int bytesRead;
@@ -238,7 +238,7 @@ public class FileTransferServer {
             outputStream.flush();
             outputStream.close();
 
-            // MediaScanner'a bildir (sadece Android 9 ve altı için)
+            
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && outputFile != null) {
                 android.media.MediaScannerConnection.scanFile(context,
                         new String[]{outputFile.getAbsolutePath()},

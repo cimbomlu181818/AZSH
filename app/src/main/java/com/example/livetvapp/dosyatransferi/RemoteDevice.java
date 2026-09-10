@@ -2,10 +2,7 @@ package com.example.livetvapp.dosyatransferi;
 
 import android.util.Log;
 
-/**
- * Ağdaki bir cihazı temsil eden model sınıfı
- * IP adresi, port ve cihaz adını tutar
- */
+
 public class RemoteDevice {
     private static final String TAG = "📦[RemoteDevice]";
 

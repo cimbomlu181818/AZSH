@@ -63,7 +63,7 @@ public class RemoteControlServer {
     private void startDiscoveryListener() {
         executorService.execute(() -> {
             try {
-                // Tüm arayüzlerde dinle
+                
                 discoverySocket = new DatagramSocket(null);
                 discoverySocket.setReuseAddress(true);
                 discoverySocket.bind(new InetSocketAddress(DISCOVERY_PORT));
@@ -105,7 +105,7 @@ public class RemoteControlServer {
                         }
                         break;
                     } catch (java.net.SocketTimeoutException e) {
-                        // Normal timeout, devam et
+                        
                     } catch (Exception e) {
                         Log.e(TAG, "❌ Discovery dinleme hatası: " + e.getMessage());
                     }
@@ -122,7 +122,7 @@ public class RemoteControlServer {
             deviceName = "Android Cihaz";
         }
 
-        // IP adresini de ekleyelim (aynı modelden birden fazla varsa ayırt etmek için)
+        
         try {
             WifiManager wifiManager = (WifiManager) context.getApplicationContext()
                     .getSystemService(Context.WIFI_SERVICE);

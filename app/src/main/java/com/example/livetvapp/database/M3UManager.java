@@ -194,7 +194,7 @@ public class M3UManager {
                 db.channelDao().updateSourceName(eskiIsim, yeniIsim);
                 System.out.println("✅ M3U ismi değiştirildi: " + eskiIsim + " → " + yeniIsim);
 
-                // Xtream hesap kaydını da güncelle
+                
                 List<String[]> accounts = XtreamCodesManager.getAccounts(ctx);
                 boolean xtreamKaydiVarMi = false;
                 for (String[] acc : accounts) {

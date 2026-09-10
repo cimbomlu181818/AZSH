@@ -28,7 +28,7 @@ public class DeviceScanActivity extends AppCompatActivity {
     private static final String EXTRA_FILE_PATHS = "file_paths";
     private static final String EXTRA_MULTI_FILE_MODE = "multi_file_mode";
 
-    // UI bileşenleri
+    
     private TextView tvDosyaBadge;
     private TextView tvTaramaDurum;
     private TextView tvSure;
@@ -114,7 +114,7 @@ public class DeviceScanActivity extends AppCompatActivity {
     }
 
     private void startScan() {
-        // Mevcut listeyi temizle
+        
         deviceList.clear();
         adapter.notifyDataSetChanged();
         tvBulunanSayisi.setText("📡 Bulunan cihazlar: 0");
@@ -126,7 +126,7 @@ public class DeviceScanActivity extends AppCompatActivity {
         scanCompleted = false;
         rvCihazlar.setVisibility(View.GONE);
 
-        // Sayaç simülasyonu (8 saniye) - sadece görsel geri bildirim için
+        
         scanSeconds = 0;
         mainHandler.postDelayed(new Runnable() {
             @Override
@@ -150,14 +150,14 @@ public class DeviceScanActivity extends AppCompatActivity {
 
         networkScanner = new NetworkScanner(this);
 
-        // ✅✅✅ GERÇEK ZAMANLI TARAMA - DOĞRU METOD ✅✅✅
+        
         networkScanner.scanForDevicesRealtime(new NetworkScanner.RealTimeScanCallback() {
             @Override
             public void onDeviceFound(RemoteDevice device) {
                 runOnUiThread(() -> {
                     Log.d("DeviceScan", "🎉 Cihaz bulundu: " + device.getName() + " - " + device.getIpAddress());
 
-                    // Aynı IP'den tekrar ekleme
+                    
                     boolean exists = false;
                     for (RemoteDevice d : deviceList) {
                         if (d.getIpAddress().equals(device.getIpAddress())) {
@@ -172,7 +172,7 @@ public class DeviceScanActivity extends AppCompatActivity {
                         rvCihazlar.setVisibility(View.VISIBLE);
                         tvTaramaDurum.setText("✅ Cihaz bulundu, seçiniz");
 
-                        // Cihaz bulunduğunda progress bar'ı tamamla
+                        
                         progressBar.setIndeterminate(false);
                         progressBar.setProgress(100);
                     }
@@ -252,7 +252,7 @@ public class DeviceScanActivity extends AppCompatActivity {
         }
     }
 
-    // RecyclerView Adapter
+    
     public static class CihazAdapter extends RecyclerView.Adapter<CihazAdapter.ViewHolder> {
         private List<RemoteDevice> devices;
         private OnDeviceClickListener listener;

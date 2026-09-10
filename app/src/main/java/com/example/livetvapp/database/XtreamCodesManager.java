@@ -331,8 +331,7 @@ public class XtreamCodesManager {
                                       String sourceName,
                                       Context ctx,
                                       OnSeriesInfoLoadedListener listener) {
-        // URL'den series_id çıkar
-        // Örnek URL: http://sunucu.com/series/user/pass/12345.mkv
+
         String seriesId = null;
         try {
             String path = new URL(seriesUrl).getPath();
@@ -344,7 +343,7 @@ public class XtreamCodesManager {
             return;
         }
 
-        // Hesap bilgilerini URL'den çıkar
+
         String server = null;
         String username = null;
         String password = null;
@@ -353,7 +352,7 @@ public class XtreamCodesManager {
             server = u.getProtocol() + "://" + u.getHost()
                     + (u.getPort() != -1 ? ":" + u.getPort() : "");
             String[] parts = u.getPath().split("/");
-            // /series/username/password/id.mkv
+
             if (parts.length >= 4) {
                 username = parts[2];
                 password = parts[3];
@@ -405,7 +404,7 @@ public class XtreamCodesManager {
                         }
                         sezonlar.add(sezon);
                     }
-                    // Sezon numarasına göre sırala
+
                     Collections.sort(sezonlar, (a, b) -> Integer.compare(a.getSezonNo(), b.getSezonNo()));
                 }
                 new Handler(Looper.getMainLooper()).post(() -> {

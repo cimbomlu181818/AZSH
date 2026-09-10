@@ -10,11 +10,11 @@ public class StalkerPortal {
     private long id;
 
     @NonNull
-    private String name;          // "Ottawa"
+    private String name;          
     @NonNull
-    private String portalUrl;     // http://12876-ottawa.cdn-o2.me/c/
+    private String portalUrl;     
     @NonNull
-    private String macAddress;    // 00:1A:79:75:8B:2E
+    private String macAddress;    
     private String token;
     private long tokenExpiry;
     private boolean isActive;
@@ -29,7 +29,7 @@ public class StalkerPortal {
         this.isActive = true;
     }
 
-    // getters/setters
+    
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
     @NonNull public String getName() { return name; }

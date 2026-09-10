@@ -176,7 +176,7 @@ public class bar {
                 seekPreviewMs = getCurrentPositionMs();
                 resetControlsTimeout();
                 System.out.println("🎯 SeekBar focus aldı");
-                // Seek bar odaklanınca kısayol güncelle
+                
                 if (dpad != null) dpad.guncelleKisayol();
             } else {
                 seekBar.setBackgroundColor(android.graphics.Color.TRANSPARENT);
@@ -185,7 +185,7 @@ public class bar {
                     handler.removeCallbacks(seekCommitRunnable);
                     commitSeek();
                 }
-                // Seek bar focus kaybedince de güncelle
+                
                 if (dpad != null) dpad.guncelleKisayol();
             }
         });
@@ -196,7 +196,7 @@ public class bar {
     }
     public boolean handleSeekBarKey(int keyCode) {
         if (!seekBarHasFocus || seekBar == null) return false;
-        // Duration'dan bağımsız her zaman çalışması gereken tuşlar
+        
         if (keyCode == android.view.KeyEvent.KEYCODE_DPAD_UP
                 || keyCode == android.view.KeyEvent.KEYCODE_BACK
                 || keyCode == android.view.KeyEvent.KEYCODE_ESCAPE) {
@@ -223,7 +223,7 @@ public class bar {
                 return true;
             case android.view.KeyEvent.KEYCODE_DPAD_DOWN:
                 seekBar.clearFocus();
-                // Focus'u bar butonlarına ver (PlayPause veya listedeki ilk buton)
+                
                 if (btnPlayPause != null && btnPlayPause.getVisibility() == View.VISIBLE) {
                     btnPlayPause.postDelayed(() -> btnPlayPause.requestFocus(), 50);
                 } else if (!buttons.isEmpty()) {
@@ -387,10 +387,10 @@ public class bar {
         }
         if (btnFullscreen != null) {
             btnFullscreen.setOnClickListener(v -> {
-                toggleAspectRatio();  // Artık uzun basma değil, tek basma
+                toggleAspectRatio();  
                 resetControlsTimeout();
             });
-            // OnLongClickListener'ı kaldır
+            
         }
         if (btnCloseBar != null) {
             btnCloseBar.setOnClickListener(v -> gizle());
@@ -598,11 +598,11 @@ public class bar {
         handler.removeCallbacks(seekBarUpdateRunnable);
         handler.post(seekBarUpdateRunnable);
         resetControlsTimeout();
-        // Remote aktifken arama ve ayarlar butonlarını gizle
+        
         if (btnSearch   != null) btnSearch.setVisibility(remoteAktif   ? View.GONE : View.VISIBLE);
         if (btnSettings != null) btnSettings.setVisibility(remoteAktif ? View.GONE : View.VISIBLE);
 
-        // Layout tamamlansın diye 100ms gecikmeli focus
+        
         playerControls.postDelayed(this::focusIlkButon, 100);
         System.out.println("✅ Bar gösterildi");
         if (dpad != null) dpad.guncelleKisayol();
@@ -628,7 +628,7 @@ public class bar {
         System.out.println("Bar gizlendi");
         if (dpad != null) dpad.guncelleKisayol();
 
-        // Bar kapanınca margin'i güncelle (seek yok → 20dp sabit)
+        
         if (dpad != null && dpad.getAnakontrol() != null) {
             dpad.getAnakontrol().kutuMargininiAktifPaneleGoreAyarla();
         }

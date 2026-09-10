@@ -104,7 +104,7 @@ public class KategoriPaneli {
                 int gorunan    = lm.getChildCount();
                 int toplam     = lm.getItemCount();
                 int ilkGorunen = lm.findFirstVisibleItemPosition();
-                // Aşağı scroll
+                
                 if (dy > 0 && (gorunan + ilkGorunen) >= toplam - 5) {
                     kategoriYukleniyor = true;
                     if (sayfaYukleyici != null)

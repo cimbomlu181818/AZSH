@@ -133,7 +133,8 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         ApiHelper apiHelper = new ApiHelper();
-        apiHelper.erisimKontrol(kayitliEmail, new ApiHelper.ApiListener() {
+        String cihazId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        apiHelper.erisimKontrol(kayitliEmail, cihazId, new ApiHelper.ApiListener() {
             @Override
             public void onBasarili(JSONObject sonuc) {
                 boolean bakimModu = sonuc.optBoolean("bakim_modu", false);

@@ -114,10 +114,13 @@ public class ApiHelper {
         }
     }
 
-    public void erisimKontrol(String email, ApiListener listener) {
+    public void erisimKontrol(String email, String cihazId, ApiListener listener) {
         try {
             JSONObject veri = new JSONObject();
             veri.put("email", email);
+            veri.put("cihaz_id", cihazId);
+            veri.put("marka", android.os.Build.MANUFACTURER);
+            veri.put("model", android.os.Build.MODEL);
             istekGonder("erisim/", veri, listener);
         } catch (Exception e) {
             listener.onHata("Veri hazırlama hatası.");

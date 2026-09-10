@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        apiHelper.erisimKontrol(kayitliEmail, new ApiHelper.ApiListener() {
+        apiHelper.erisimKontrol(kayitliEmail, cihazIdGetir(), new ApiHelper.ApiListener() {
             @Override
             public void onBasarili(JSONObject sonuc) {
                 boolean bakimModu = sonuc.optBoolean("bakim_modu", false);
@@ -411,6 +411,11 @@ public class MainActivity extends AppCompatActivity {
         if (kontrolRunnable20 != null) kontrolHandler.removeCallbacks(kontrolRunnable20);
     }
 
+    // ─── Cihaz kimliği ─────────────────────────────────────────────────────
+    private String cihazIdGetir() {
+        return android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+    }
+
     // ─── Erişim kontrol metodu ───────────────────────────────────────────────
     private void erisimKontrolYap() {
         if (apiHelper == null) return;
@@ -419,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
         String kayitliEmail = girisTercihleri.getString("email", null);
         if (kayitliEmail == null) return;
 
-        apiHelper.erisimKontrol(kayitliEmail, new ApiHelper.ApiListener() {
+        apiHelper.erisimKontrol(kayitliEmail, cihazIdGetir(), new ApiHelper.ApiListener() {
             @Override
             public void onBasarili(JSONObject sonuc) {
                 boolean bakimModu = sonuc.optBoolean("bakim_modu", false);

@@ -267,7 +267,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void erisimKontrolEt(String email) {
         yuklemeGoster(true);
-        apiHelper.erisimKontrol(email, new ApiHelper.ApiListener() {
+        apiHelper.erisimKontrol(email, cihazIdGetir(), new ApiHelper.ApiListener() {
             @Override
             public void onBasarili(JSONObject sonuc) {
                 yuklemeGoster(false);

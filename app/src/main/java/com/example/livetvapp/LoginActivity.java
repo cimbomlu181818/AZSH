@@ -306,8 +306,7 @@ public class LoginActivity extends AppCompatActivity {
             if (tvTrialBilgisi != null) tvTrialBilgisi.setVisibility(View.GONE);
 
             tvTrialBittiMesaji.setText(
-                    "Deneme süreniz sona erdi.\n" +
-                            "Ödeme yapıp dekontu ilettiyseniz, üyeliğiniz en geç 12 saat içinde premium olarak aktifleştirilecektir."
+                    "İzlemeye devam etmek için hesabını premium'a yükselt. Ödeme yapıp dekontu ilettiysen, üyeliğin en geç 12 saat içinde aktifleşir."
             );
             layoutTrialUyari.setVisibility(View.VISIBLE);
 

@@ -173,7 +173,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnGoogle">
+            app:layout_constraintTop_toBottomOf="@id/tvHata">
 
             <TextView
                 android:id="@+id/tvUyariSolIkon"
@@ -214,7 +214,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvHata" />
+            app:layout_constraintTop_toBottomOf="@id/layoutTrialUyari" />
 
         <!-- Trial bilgisi -->
         <TextView
@@ -231,27 +231,117 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/progressBar" />
         <!-- Premium bilgi kutusu -->
-        <TextView
+        <LinearLayout
             android:id="@+id/tvPremiumBilgisi"
             android:layout_width="625dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@drawable/premium_kart_background"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:lineSpacingExtra="4dp"
+            android:orientation="vertical"
             android:padding="16dp"
-            android:text="🔥  PREMIUM ÜYELİK — ₺100\n2 cihaza kadar kullanım\n\n💳  IBAN: TR00 0000 0000 0000 0000 0000 00\n👤  Alıcı: AD SOYAD\n\n📧  Dekont ve destek için:\nazsh181818@gmail.com"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTrialBilgisi"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="1.0">
+
+            <!-- Başlık + fiyat -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🔥 Premium Üyelik"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₺100/ay"
+                    android:textColor="#FF6B2C"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="2 cihaza kadar kullanım  ·  12 saat içinde aktif"
+                android:textColor="#B0BAC9"
+                android:textSize="12sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:background="#2C3444" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="IBAN"
+                android:textColor="#8F9BB3"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvIbanDeger"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="monospace"
+                    android:text="TR00 0000 0000 0000 0000 0000 00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnIbanKopyala"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/iban_copy_button_background"
+                    android:minWidth="0dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:stateListAnimator="@null"
+                    android:text="Kopyala"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="👤 Alıcı: AD SOYAD"
+                android:textColor="#B0BAC9"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="📧 Dekont ve destek için: azsh181818@gmail.com"
+                android:textColor="#B0BAC9"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
         <!-- ══════════════════════════════════════════════════════════════════
              Doğrulama paneli — başta gizli, kayıt/doğrulanmamış girişte gösterilir

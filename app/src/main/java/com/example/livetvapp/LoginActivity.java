@@ -1,5 +1,7 @@
 package com.example.livetvapp;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,7 +26,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etSifre, etDogrulamaKodu;
     private Button btnGirisYap, btnKayitOl, btnGoogle;
-    private TextView tvHata, tvTrialBilgisi, tvTrialDolduBanner, tvPremiumBilgisi;
+    private TextView tvHata, tvTrialBilgisi, tvTrialDolduBanner;
+    private View tvPremiumBilgisi;
+    private TextView tvIbanDeger;
+    private Button btnIbanKopyala;
     private ProgressBar progressBar;
 
     private View layoutDogrulama;
@@ -80,6 +86,8 @@ public class LoginActivity extends AppCompatActivity {
         tvTrialBilgisi      = findViewById(R.id.tvTrialBilgisi);
         tvTrialDolduBanner  = findViewById(R.id.tvTrialDolduBanner);
         tvPremiumBilgisi    = findViewById(R.id.tvPremiumBilgisi);
+        tvIbanDeger         = findViewById(R.id.tvIbanDeger);
+        btnIbanKopyala      = findViewById(R.id.btnIbanKopyala);
         progressBar         = findViewById(R.id.progressBar);
 
         layoutDogrulama      = findViewById(R.id.layoutDogrulama);
@@ -97,6 +105,16 @@ public class LoginActivity extends AppCompatActivity {
     private void olaylariAyarla() {
         btnGirisYap.setOnClickListener(v -> islemYap(false));
         btnKayitOl.setOnClickListener(v -> islemYap(true));
+
+        if (btnIbanKopyala != null && tvIbanDeger != null) {
+            btnIbanKopyala.setOnClickListener(v -> {
+                String iban = tvIbanDeger.getText().toString().replace(" ", "");
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("IBAN", iban);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(this, "IBAN kopyalandı", Toast.LENGTH_SHORT).show();
+            });
+        }
 
         etEmail.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_NEXT) {

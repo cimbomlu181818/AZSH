@@ -828,7 +828,7 @@ public class AyarlarPaneli {
     private void xtreamYukle(String server, String username, String password, String sourceName) {
         Toast.makeText(activity, "⏳ Xtream bağlanıyor: " + sourceName, Toast.LENGTH_LONG).show();
         if (yuklemeListener != null) yuklemeListener.yuklemeBasladi(sourceName);
-        System.out.println("🔍 [XTREAM-EKLE] xtreamYukle başladı | sourceName='" + sourceName + "' | server='" + server + "' | username='" + username + "'");
+
         ChannelRepository channelRepository = new ChannelRepository(activity);
         Handler mainHandler = new Handler(Looper.getMainLooper());
         XtreamCodesManager.loadChannels(activity, server, username, password, sourceName,

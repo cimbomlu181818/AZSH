@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -31,8 +32,13 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnTekrarGonder;
     private Button btnGirisEkraninaGeri;
 
+    private LinearLayout layoutTrialUyari;
+    private TextView tvTrialBittiMesaji, tvUyariSolIkon, tvUyariSagIkon;
+
     private ApiHelper apiHelper;
     private String beklenenDogrulamaEmail = "";
+
+    private static final int BAKIM_OVERLAY_ID = 998877;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         btnGoogle.setVisibility(View.GONE);
 
         if (trialDoldu) {
-            tvTrialDolduBanner.setVisibility(View.VISIBLE);
+            trialBittiUyariGoster();
         }
 
         String kayitliEmail = kayitliEmailGetir();
@@ -81,6 +87,11 @@ public class LoginActivity extends AppCompatActivity {
         btnKoduOnayla        = findViewById(R.id.btnKoduOnayla);
         btnTekrarGonder      = findViewById(R.id.btnTekrarGonder);
         btnGirisEkraninaGeri = findViewById(R.id.btnGirisEkraninaGeri);
+
+        layoutTrialUyari    = findViewById(R.id.layoutTrialUyari);
+        tvTrialBittiMesaji  = findViewById(R.id.tvTrialBittiMesaji);
+        tvUyariSolIkon      = findViewById(R.id.tvUyariSolIkon);
+        tvUyariSagIkon      = findViewById(R.id.tvUyariSagIkon);
     }
 
     private void olaylariAyarla() {
@@ -201,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
         beklenenDogrulamaEmail = email;
         runOnUiThread(() -> {
             hataGizle();
+            trialUyariGizle();
 
             etEmail.setVisibility(View.GONE);
             etSifre.setVisibility(View.GONE);
@@ -244,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     boolean bakimModu = sonuc.optBoolean("bakim_modu", false);
                     if (bakimModu) {
-                        hataGoster(sonuc.optString("mesaj", "Uygulama bakımda."));
+                        bakimEkraniniTamGoster(sonuc.optString("mesaj", "Uygulama bakımda."));
                         return;
                     }
                     String durum = sonuc.optString("durum", "");
@@ -255,8 +267,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else if ("mail_dogrulanmadi".equals(durum)) {
                         dogrulamaPaneliniGoster(email);
                     } else {
-                        tvTrialDolduBanner.setVisibility(View.VISIBLE);
-                        hataGoster("Deneme süreniz doldu. Lütfen iletişime geçin.");
+                        trialBittiUyariGoster();
                     }
                 } catch (Exception e) {
                     hataGoster("Beklenmeyen bir hata oluştu.");
@@ -268,6 +279,38 @@ public class LoginActivity extends AppCompatActivity {
                 hataGoster(hata);
             }
         });
+    }
+
+    // ─── Trial bitti uyarısı (yanıp sönen ikonlu) ────────────────────────────
+    private void trialBittiUyariGoster() {
+        runOnUiThread(() -> {
+            hataGizle();
+            if (tvTrialBilgisi != null) tvTrialBilgisi.setVisibility(View.GONE);
+
+            tvTrialBittiMesaji.setText(
+                    "Deneme süreniz sona erdi.\n" +
+                            "Ödeme yapıp dekontu ilettiyseniz, üyeliğiniz en geç 12 saat içinde premium olarak aktifleştirilecektir."
+            );
+            layoutTrialUyari.setVisibility(View.VISIBLE);
+
+            blinkBaslat(tvUyariSolIkon);
+            blinkBaslat(tvUyariSagIkon);
+        });
+    }
+
+    private void trialUyariGizle() {
+        layoutTrialUyari.setVisibility(View.GONE);
+        tvUyariSolIkon.clearAnimation();
+        tvUyariSagIkon.clearAnimation();
+    }
+
+    private void blinkBaslat(View view) {
+        android.animation.ObjectAnimator anim =
+                android.animation.ObjectAnimator.ofFloat(view, "alpha", 1f, 0.15f);
+        anim.setDuration(700);
+        anim.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+        anim.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        anim.start();
     }
 
     private void uygulamayiAc() {
@@ -315,6 +358,77 @@ public class LoginActivity extends AppCompatActivity {
 
     private void hataGizle() {
         runOnUiThread(() -> tvHata.setVisibility(View.GONE));
+    }
+
+    // ─── Tam ekran bakım modu ekranı ─────────────────────────────────────────
+    private void bakimEkraniniTamGoster(String mesaj) {
+        runOnUiThread(() -> {
+            if (findViewById(BAKIM_OVERLAY_ID) != null) return; // zaten gösteriliyor
+
+            klavyeGizle();
+
+            android.widget.FrameLayout kaplama = new android.widget.FrameLayout(this);
+            kaplama.setId(BAKIM_OVERLAY_ID);
+            kaplama.setBackgroundColor(0xFF0A0A0A);
+            kaplama.setFocusableInTouchMode(true);
+            kaplama.setLayoutParams(new android.widget.FrameLayout.LayoutParams(
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT));
+
+            android.widget.LinearLayout icerik = new android.widget.LinearLayout(this);
+            icerik.setOrientation(android.widget.LinearLayout.VERTICAL);
+            icerik.setGravity(android.view.Gravity.CENTER);
+            icerik.setPadding(80, 80, 80, 80);
+            icerik.setLayoutParams(new android.widget.FrameLayout.LayoutParams(
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT));
+
+            android.widget.TextView ikon = new android.widget.TextView(this);
+            ikon.setText("⚙");
+            ikon.setTextSize(72);
+            ikon.setTextColor(0xFFFF6B2C);
+            ikon.setGravity(android.view.Gravity.CENTER);
+            icerik.addView(ikon);
+
+            android.animation.ObjectAnimator donme =
+                    android.animation.ObjectAnimator.ofFloat(ikon, "rotation", 0f, 360f);
+            donme.setDuration(3000);
+            donme.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+            donme.setInterpolator(new android.view.animation.LinearInterpolator());
+            donme.start();
+
+            android.widget.Space bosluk1 = new android.widget.Space(this);
+            bosluk1.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 48));
+            icerik.addView(bosluk1);
+
+            android.widget.TextView tvBaslik = new android.widget.TextView(this);
+            tvBaslik.setText("UYGULAMA BAKIMDA");
+            tvBaslik.setTextColor(0xFFFFFFFF);
+            tvBaslik.setTextSize(22);
+            tvBaslik.setGravity(android.view.Gravity.CENTER);
+            tvBaslik.setTypeface(tvBaslik.getTypeface(), android.graphics.Typeface.BOLD);
+            icerik.addView(tvBaslik);
+
+            android.widget.Space bosluk2 = new android.widget.Space(this);
+            bosluk2.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 20));
+            icerik.addView(bosluk2);
+
+            android.widget.TextView tvMesaj = new android.widget.TextView(this);
+            tvMesaj.setText(mesaj);
+            tvMesaj.setTextColor(0xFFB0B0B0);
+            tvMesaj.setTextSize(15);
+            tvMesaj.setGravity(android.view.Gravity.CENTER);
+            tvMesaj.setLineSpacing(6, 1.2f);
+            icerik.addView(tvMesaj);
+
+            kaplama.addView(icerik);
+            addContentView(kaplama, new android.widget.FrameLayout.LayoutParams(
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT));
+            kaplama.requestFocus();
+        });
     }
 
     private void klavyeGizle() {

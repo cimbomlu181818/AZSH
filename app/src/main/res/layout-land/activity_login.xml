@@ -161,6 +161,49 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnGoogle" />
 
+        <LinearLayout
+            android:id="@+id/layoutTrialUyari"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="#20FF3B30"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnGoogle">
+
+            <TextView
+                android:id="@+id/tvUyariSolIkon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="⚠"
+                android:textColor="#FFAFA5"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvTrialBittiMesaji"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:text=""
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvUyariSagIkon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="⚠"
+                android:textColor="#FFAFA5"
+                android:textSize="16sp" />
+        </LinearLayout>
         <!-- ProgressBar -->
         <ProgressBar
             android:id="@+id/progressBar"
@@ -187,21 +230,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/progressBar" />
-
         <!-- Premium bilgi kutusu -->
         <TextView
             android:id="@+id/tvPremiumBilgisi"
             android:layout_width="625dp"
-            android:layout_height="77dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="#33FF6B2C"
+            android:background="@drawable/premium_kart_background"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:padding="12dp"
-            android:text="🔥 Premium üyelik sadece ₺100 · 2 cihaza kadar kullanım\n📧 Satın almak, sorun bildirmek, öneri ve görüşleriniz için:\n azsh181818@gmail.com"
+            android:lineSpacingExtra="4dp"
+            android:padding="16dp"
+            android:text="🔥  PREMIUM ÜYELİK — ₺100\n2 cihaza kadar kullanım\n\n💳  IBAN: TR00 0000 0000 0000 0000 0000 00\n👤  Alıcı: AD SOYAD\n\n📧  Dekont ve destek için:\nazsh181818@gmail.com"
             android:textColor="#FFFFFF"
             android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"

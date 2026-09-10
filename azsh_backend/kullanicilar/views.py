@@ -137,6 +137,10 @@ def erisim_kontrol(request):
         return JsonResponse({'bakim_modu': True, 'mesaj': ayarlar.bakim_mesaji})
 
     email = veri.get('email', '').strip().lower()
+    cihaz_id = veri.get('cihaz_id', '').strip()
+    marka = veri.get('marka', '').strip()
+    model_adi = veri.get('model', '').strip()
+
     if not email:
         return JsonResponse({'hata': 'Email zorunludur.'}, status=400)
 
@@ -147,6 +151,30 @@ def erisim_kontrol(request):
 
     if not kullanici.mail_dogrulandi:
         return JsonResponse({'bakim_modu': False, 'erisim': False, 'durum': 'mail_dogrulanmadi'})
+
+    # Cihaz senkronizasyonu: admin panelden cihaz silinmiş olabilir.
+    # Uygulama email zaten kayıtlıysa giris/ akışına hiç uğramadan doğrudan
+    # buraya düşüyor, bu yüzden cihaz kaydı burada da güncellenmeli.
+    if cihaz_id:
+        mevcut_cihaz = Cihaz.objects.filter(kullanici=kullanici, cihaz_id=cihaz_id).first()
+        if mevcut_cihaz is None:
+            if Cihaz.objects.filter(kullanici=kullanici).count() < 2:
+                Cihaz.objects.create(
+                    kullanici=kullanici, cihaz_id=cihaz_id, marka=marka, model=model_adi
+                )
+            # 2 cihaz doluysa burada sessizce geç: erisim_kontrol zaten aktif
+            # oturumu kesmek için kullanılmamalı, cihaz limiti sadece giris_yap'ta uygulanır.
+        elif marka or model_adi:
+            # Cihaz zaten kayıtlı; marka/model bilgisi değişmişse güncelle.
+            degisti = False
+            if marka and mevcut_cihaz.marka != marka:
+                mevcut_cihaz.marka = marka
+                degisti = True
+            if model_adi and mevcut_cihaz.model != model_adi:
+                mevcut_cihaz.model = model_adi
+                degisti = True
+            if degisti:
+                mevcut_cihaz.save()
 
     if kullanici.premium_mi:
         return JsonResponse({'bakim_modu': False, 'erisim': True, 'durum': 'premium'})

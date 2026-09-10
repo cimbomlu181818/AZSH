@@ -19,6 +19,7 @@ public class ApiHelper {
         void onHata(String hata);
     }
 
+
     private void istekGonder(String endpoint, JSONObject veri, ApiListener listener) {
         new AsyncTask<Void, Void, String>() {
             String hataMesaji = null;

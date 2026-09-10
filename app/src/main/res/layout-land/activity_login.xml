@@ -407,35 +407,6 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
-            <!-- Destek satırı -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:text="📧"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dekont ve destek için: "
-                    android:textColor="@color/text_muted"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="azsh181818@gmail.com"
-                    android:textColor="@color/gold"
-                    android:textSize="12sp" />
-            </LinearLayout>
         </LinearLayout>
 
         <!-- ══════════════════════════════════════════════════════════════════

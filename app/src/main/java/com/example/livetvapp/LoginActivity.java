@@ -304,16 +304,40 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             hataGizle();
             if (tvTrialBilgisi != null) tvTrialBilgisi.setVisibility(View.GONE);
+            if (tvPremiumBilgisi != null) tvPremiumBilgisi.setVisibility(View.VISIBLE);
 
-            tvTrialBittiMesaji.setText(
-                    "İzlemeye devam etmek için hesabını premium'a yükselt. Ödeme yapıp dekontu ilettiysen, üyeliğin en geç 12 saat içinde aktifleşir."
-            );
+            String tamMetin = "Deneme süreniz doldu. Uygulamayı kullanmaya devam etmek için aşağıdaki hesaba 100 TL gönderin. Açıklama kısmına kayıt olurken kullandığınız e-posta adresini yazın, dekont fotoğrafını azsh181818@gmail.com adresine iletin. Ödemeniz onaylandıktan sonra hesabınız en geç 12 saat içinde aktif olacaktır.";
+            String mailAdresi = "azsh181818@gmail.com";
+
+            android.text.SpannableString spannable = new android.text.SpannableString(tamMetin);
+            int baslangic = tamMetin.indexOf(mailAdresi);
+            if (baslangic >= 0) {
+                int bitis = baslangic + mailAdresi.length();
+                spannable.setSpan(
+                        new android.text.style.ForegroundColorSpan(0xFFE58A8A),
+                        baslangic, bitis,
+                        android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+                spannable.setSpan(
+                        new android.text.style.RelativeSizeSpan(1.15f),
+                        baslangic, bitis,
+                        android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+                spannable.setSpan(
+                        new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
+                        baslangic, bitis,
+                        android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+            }
+            tvTrialBittiMesaji.setText(spannable);
+
             layoutTrialUyari.setVisibility(View.VISIBLE);
 
             blinkBaslat(tvUyariSolIkon);
             blinkBaslat(tvUyariSagIkon);
         });
     }
+
 
     private void trialUyariGizle() {
         layoutTrialUyari.setVisibility(View.GONE);

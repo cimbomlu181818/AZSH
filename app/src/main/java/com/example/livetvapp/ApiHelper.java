@@ -12,7 +12,7 @@ public class ApiHelper {
 
 
 
-    private static final String BASE_URL = "http://10.0.2.2:8000/api/";
+    private static final String BASE_URL = "http://153.56.184.247:8080/api/";
 
     public interface ApiListener {
         void onBasarili(JSONObject sonuc);

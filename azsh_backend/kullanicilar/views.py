@@ -6,9 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.utils import timezone
 from .models import Kullanici, Ayarlar, Cihaz
-
+from django_ratelimit.decorators import ratelimit
 
 @csrf_exempt
+@ratelimit(key='ip', rate='5/m', method='POST', block=True)
 def kayit_ol(request):
     if request.method != 'POST':
         return JsonResponse({'hata': 'Sadece POST istekleri kabul edilir.'}, status=405)
@@ -49,6 +50,7 @@ def kayit_ol(request):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='5/m', method='POST', block=True)
 def dogrula(request):
     if request.method != 'POST':
         return JsonResponse({'hata': 'Sadece POST istekleri kabul edilir.'}, status=405)
@@ -83,6 +85,7 @@ def dogrula(request):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='5/m', method='POST', block=True)
 def giris_yap(request):
     if request.method != 'POST':
         return JsonResponse({'hata': 'Sadece POST istekleri kabul edilir.'}, status=405)
@@ -123,6 +126,7 @@ def giris_yap(request):
 
 
 @csrf_exempt
+@ratelimit(key='ip', rate='30/m', method='POST', block=True)
 def erisim_kontrol(request):
     if request.method != 'POST':
         return JsonResponse({'hata': 'Sadece POST istekleri kabul edilir.'}, status=405)
@@ -158,12 +162,11 @@ def erisim_kontrol(request):
     if cihaz_id:
         mevcut_cihaz = Cihaz.objects.filter(kullanici=kullanici, cihaz_id=cihaz_id).first()
         if mevcut_cihaz is None:
-            if Cihaz.objects.filter(kullanici=kullanici).count() < 2:
-                Cihaz.objects.create(
-                    kullanici=kullanici, cihaz_id=cihaz_id, marka=marka, model=model_adi
-                )
-            # 2 cihaz doluysa burada sessizce geç: erisim_kontrol zaten aktif
-            # oturumu kesmek için kullanılmamalı, cihaz limiti sadece giris_yap'ta uygulanır.
+            if Cihaz.objects.filter(kullanici=kullanici).count() >= 2:
+                return JsonResponse({'bakim_modu': False, 'erisim': False, 'durum': 'cihaz_limiti'}, status=403)
+            Cihaz.objects.create(
+                kullanici=kullanici, cihaz_id=cihaz_id, marka=marka, model=model_adi
+            )
         elif marka or model_adi:
             # Cihaz zaten kayıtlı; marka/model bilgisi değişmişse güncelle.
             degisti = False

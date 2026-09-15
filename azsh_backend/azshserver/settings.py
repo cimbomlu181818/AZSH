@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'kullanicilar',
     'axes',
+    'django_ratelimit',
 ]
 
 MIDDLEWARE = [

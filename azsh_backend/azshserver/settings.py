@@ -30,7 +30,6 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,10.0
 
 CSRF_TRUSTED_ORIGINS = os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS') else []
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'kullanicilar',
+    'axes',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'azshserver.urls'
@@ -114,6 +115,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# ─── Brute-force koruması (django-axes) ──────────────────────────────────
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+AXES_FAILURE_LIMIT = 5          # 5 başarısız denemeden sonra kilitle
+AXES_COOLOFF_TIME = 1           # 1 saat kilitli kalsın
+AXES_LOCKOUT_PARAMETERS = ['username']  # kullanıcı adına göre kilitle
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 

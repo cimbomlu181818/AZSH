@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,6 +128,7 @@ AXES_LOCKOUT_PARAMETERS = ['username']  # kullanıcı adına göre kilitle
 
 # ─── HTTPS güvenlik sıkılaştırması ────────────────────────────────────────
 SECURE_SSL_REDIRECT = True          # http:// gelen her isteği https://'ye çevir
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True        # oturum çerezi sadece https üzerinden gönderilsin
 CSRF_COOKIE_SECURE = True           # CSRF çerezi sadece https üzerinden gönderilsin
 SECURE_HSTS_SECONDS = 31536000      # tarayıcıya 1 yıl boyunca "hep https kullan" de
@@ -148,6 +150,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration

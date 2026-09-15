@@ -124,6 +124,14 @@ AUTHENTICATION_BACKENDS = [
 AXES_FAILURE_LIMIT = 5          # 5 başarısız denemeden sonra kilitle
 AXES_COOLOFF_TIME = 1           # 1 saat kilitli kalsın
 AXES_LOCKOUT_PARAMETERS = ['username']  # kullanıcı adına göre kilitle
+
+# ─── HTTPS güvenlik sıkılaştırması ────────────────────────────────────────
+SECURE_SSL_REDIRECT = True          # http:// gelen her isteği https://'ye çevir
+SESSION_COOKIE_SECURE = True        # oturum çerezi sadece https üzerinden gönderilsin
+CSRF_COOKIE_SECURE = True           # CSRF çerezi sadece https üzerinden gönderilsin
+SECURE_HSTS_SECONDS = 31536000      # tarayıcıya 1 yıl boyunca "hep https kullan" de
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 

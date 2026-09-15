@@ -18,4 +18,5 @@ public class Bolum {
         return bolumNo + ". Bölüm";
     }
 
+
 }
